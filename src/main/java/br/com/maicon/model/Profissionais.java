@@ -28,6 +28,8 @@ import jakarta.validation.constraints.NotBlank;
  *   <li><b>{@code cargo}:</b> Cargo ou posição ocupada pelo profissional dentro da organização.</li>
  *   <li><b>{@code nascimento}:</b> Data de nascimento do profissional.</li>
  *   <li><b>{@code createdDate}:</b> Data em que o registro do profissional foi criado no sistema.</li>
+ *   <li><b>{@code deleted}:</b> Campo que informa se o registro do profissional foi deletado no sistema.</li>
+ *   <li><b>{@code deletedDate}:</b> Data em que o registro do profissional foi deletado do sistema.</li>
  * </ul>
  * 
  * <b>Considerações:</b>
@@ -84,4 +86,18 @@ public class Profissionais implements Serializable {
      */
     @Column(name = "created_date", nullable = false)
     private Date createdDate;
+    
+    /**
+     * Campo que informa se o registro do profissional foi deletado.
+     * Mapeado para a coluna "deleted" na tabela "profissionais".
+     */
+    @Column(name = "deleted")
+    private boolean deleted;
+    
+    /**
+     * Data em que o registro do profissional foi deletado.
+     * Mapeado para a coluna "deleted_date" na tabela "profissionais".
+     */
+    @Column(name = "deleted_date")
+    private Date deletedDate;
 }
