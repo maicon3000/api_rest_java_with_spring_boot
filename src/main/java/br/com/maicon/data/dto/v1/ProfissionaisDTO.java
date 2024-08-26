@@ -6,6 +6,7 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import br.com.maicon.model.Profissionais;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
@@ -52,6 +53,7 @@ public class ProfissionaisDTO implements Serializable {
     /**
      * Nome completo do profissional.
      */
+    @NotBlank(message = "O nome do profissional não pode ser vazio ou nulo.")
     private String nome;
 
     /**
