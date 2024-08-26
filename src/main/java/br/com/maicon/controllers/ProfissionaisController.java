@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.maicon.model.Profissionais;
+import br.com.maicon.data.dto.v1.ProfissionaisDTO;
 import br.com.maicon.services.ProfissionaisService;
 import br.com.maicon.util.ApiResponse;
 import jakarta.validation.Valid;
 
 /**
- * Controlador REST para gerenciar operações relacionadas à entidade {@link Profissionais}.
+ * Controlador REST para gerenciar operações relacionadas à entidade {@link ProfissionaisDTO}.
  * 
  * <p>Este controlador fornece endpoints para criar, atualizar, buscar e deletar profissionais. 
  * Todos os métodos retornam respostas em formato JSON.</p>
@@ -37,7 +37,7 @@ public class ProfissionaisController {
     /**
      * Construtor para injeção de dependências.
      * 
-     * @param service Serviço que lida com a lógica de negócios para {@link Profissionais}.
+     * @param service Serviço que lida com a lógica de negócios para {@link ProfissionaisDTO}.
      */
     public ProfissionaisController(ProfissionaisService service) {
         this.service = service;
@@ -51,7 +51,7 @@ public class ProfissionaisController {
      * @return Lista de todos os profissionais cadastrados, não deletados.
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Profissionais> findAll() {
+    public List<ProfissionaisDTO> findAll() {
         return service.findAll();
     }
 
@@ -66,7 +66,7 @@ public class ProfissionaisController {
      * @throws br.com.maicon.exception.ResourceNotFoundException se o profissional não for encontrado.
      */
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Profissionais findById(@PathVariable Long id) {
+    public ProfissionaisDTO findById(@PathVariable Long id) {
         return service.findById(id);
     }
 
@@ -80,7 +80,7 @@ public class ProfissionaisController {
      * @return Resposta contendo o status da operação e uma mensagem de sucesso.
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody Profissionais profissional) {
+    public ResponseEntity<ApiResponse> create(@Valid @RequestBody ProfissionaisDTO profissional) {
         ApiResponse response = service.create(profissional);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -99,7 +99,7 @@ public class ProfissionaisController {
      * @throws br.com.maicon.exception.ResourceNotFoundException se o profissional não for encontrado.
      */
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> update(@PathVariable Long id, @Valid @RequestBody Profissionais profissional) {
+    public ResponseEntity<ApiResponse> update(@PathVariable Long id, @Valid @RequestBody ProfissionaisDTO profissional) {
         profissional.setId(id);
         ApiResponse response = service.update(profissional);
         return ResponseEntity.ok(response);

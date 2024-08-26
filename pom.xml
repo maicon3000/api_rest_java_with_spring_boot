@@ -32,6 +32,8 @@
 
 	<properties>
 		<java.version>22</java.version>
+		<dozer.version>7.0.0</dozer.version>
+		<glassfish.version>4.0.2</glassfish.version>
 	</properties>
 
 	<dependencies>
@@ -71,7 +73,12 @@
 		<dependency>
 		    <groupId>org.glassfish</groupId>
 		    <artifactId>jakarta.el</artifactId>
-		    <version>4.0.2</version>
+		    <version>${glassfish.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.github.dozermapper</groupId>
+		    <artifactId>dozer-core</artifactId>
+		    <version>${dozer.version}</version>
 		</dependency>
 	</dependencies>
 

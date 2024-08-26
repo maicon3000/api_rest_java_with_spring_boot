@@ -52,9 +52,9 @@ import br.com.maicon.model.Profissionais;
 @Repository
 public interface ProfissionaisRepository extends JpaRepository<Profissionais, Long> {
 	
-    @Query("SELECT p FROM Profissionais p WHERE p.deleted = false")
+    @Query("SELECT p FROM Profissionais p WHERE p.deleted = false order by id")
     List<Profissionais> findAllActive();
 
-    @Query("SELECT p FROM Profissionais p WHERE p.id = :id AND p.deleted = false")
+    @Query("SELECT p FROM Profissionais p WHERE p.id = :id AND p.deleted = false order by id")
     Optional<Profissionais> findByIdAndActive(@Param("id") Long id);
 }
