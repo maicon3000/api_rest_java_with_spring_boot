@@ -1,10 +1,12 @@
 package br.com.maicon.services.validation;
 
-import jakarta.validation.Validator;
-import jakarta.validation.ConstraintViolation;
 import java.util.Set;
 
+import org.springframework.stereotype.Component;
+
 import br.com.maicon.data.dto.v1.ProfissionaisDTO;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 
 /**
  * Classe responsável por validar os dados dos profissionais utilizando o framework de validação do Jakarta Bean Validation.
@@ -23,6 +25,7 @@ import br.com.maicon.data.dto.v1.ProfissionaisDTO;
  * @author Maicon
  * @version 1.0
  */
+@Component
 public class ProfissionaisValidator {
 
     private final Validator validator;

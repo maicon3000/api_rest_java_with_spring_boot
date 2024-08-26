@@ -37,6 +37,7 @@ import br.com.maicon.exception.ResourceNotFoundException;
  * @see ResourceNotFoundException
  * @see Exception
  * 
+ * @author Maicon
  * @version 1.0
  */
 @ControllerAdvice

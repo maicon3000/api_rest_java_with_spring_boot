@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @see ResponseStatus
  * @see HttpStatus
  * 
+ * @author Maicon
  * @version 1.0
  */
 @ResponseStatus(HttpStatus.NOT_FOUND)

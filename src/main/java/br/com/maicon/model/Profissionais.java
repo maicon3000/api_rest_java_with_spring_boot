@@ -38,10 +38,8 @@ import jakarta.validation.constraints.NotBlank;
  *   <li>O uso do Lombok (@{@link Data}) simplifica o código, eliminando a necessidade de escrever manualmente os métodos getters e setters.</li>
  * </ul>
  * 
- * @author
- *   Maicon
- * @version
- *   1.0
+ * @author Maicon
+ * @version 1.0
  */
 @Data
 @Entity

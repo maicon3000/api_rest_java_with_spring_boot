@@ -48,6 +48,9 @@ import br.com.maicon.model.Profissionais;
  *
  * @see JpaRepository
  * @see Profissionais
+ * 
+ * @author Maicon
+ * @version 1.0
  */
 @Repository
 public interface ProfissionaisRepository extends JpaRepository<Profissionais, Long> {

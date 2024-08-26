@@ -15,7 +15,7 @@ import br.com.maicon.mapper.DozerMapper;
 import br.com.maicon.model.Profissionais;
 import br.com.maicon.unittests.mapper.mocks.MockProfissionais;
 
-public class DozerConverterTest {
+public class DozerMapperTest {
     
     MockProfissionais inputObject;
     OffsetDateTime expectedOffsetDateTime;
@@ -30,11 +30,8 @@ public class DozerConverterTest {
 
     @Test
     public void parseEntityToDTOTest() {
-        // Arrange
+        // Arrange & Act
         ProfissionaisDTO output = DozerMapper.parseObject(inputObject.mockEntity(), ProfissionaisDTO.class);
-
-        // Act
-        // (A ação aqui é implicitamente realizada pela linha acima, onde o mapeamento ocorre)
 
         // Assert
         assertEquals(Long.valueOf(0L), output.getId());
@@ -84,11 +81,8 @@ public class DozerConverterTest {
 
     @Test
     public void parseDTOToEntityTest() {
-        // Arrange
+        // Arrange & Act
         Profissionais output = DozerMapper.parseObject(inputObject.mockVO(), Profissionais.class);
-
-        // Act
-        // (A ação aqui é implicitamente realizada pela linha acima, onde o mapeamento ocorre)
 
         // Assert
         assertEquals(Long.valueOf(0L), output.getId());
