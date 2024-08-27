@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.maicon.data.dto.v1.ProfissionaisDTO;
-import br.com.maicon.model.Profissionais;
+import br.com.maicon.models.Profissionais;
 
 /**
  * Classe utilitária para criar instâncias de objetos de teste relacionados a {@link Profissionais} e {@link ProfissionaisDTO}.

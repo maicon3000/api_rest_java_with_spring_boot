@@ -1,52 +1,55 @@
 package br.com.maicon.services.validation;
 
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.stereotype.Component;
-
 import br.com.maicon.data.dto.v1.ProfissionaisDTO;
+import br.com.maicon.services.validation.base.ValidatorBase;
 import br.com.maicon.utils.ApiRestResponse;
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 
 /**
- * Classe responsável por validar os dados dos profissionais utilizando o framework de validação do Jakarta Bean Validation.
+ * Validador especializado para a entidade {@link ProfissionaisDTO}.
  * 
  * <p>
- * Esta classe utiliza a interface {@link Validator} para realizar a validação dos campos de um objeto {@link ProfissionaisDTO}.
- * Caso algum campo obrigatório esteja vazio, nulo ou não atenda às restrições definidas, uma exceção {@link IllegalArgumentException} é lançada.
+ * Esta classe estende a funcionalidade básica do {@link ValidatorBase}, adicionando validações específicas para a entidade {@link ProfissionaisDTO}.
+ * Especificamente, verifica se o campo {@code cargo} contém um valor válido entre "Desenvolvedor", "Designer", "Suporte" ou "Tester".
  * </p>
  * 
- * <b>Exemplo de Uso:</b>
- * <pre>{@code
- * ProfissionaisValidator validator = new ProfissionaisValidator(validator);
- * validator.validate(profissionaisDTO);
- * }</pre>
+ * <b>Métodos principais:</b>
+ * <ul>
+ *   <li>{@link #validate(ProfissionaisDTO)}: Realiza a validação completa dos dados de um profissional, incluindo a validação do cargo.</li>
+ *   <li>{@link #capitalizeCargo(String)}: Normaliza o texto do cargo, garantindo que a primeira letra seja maiúscula.</li>
+ * </ul>
+ * 
+ * <b>Considerações:</b>
+ * <ul>
+ *   <li>A classe utiliza uma lista de cargos válidos para assegurar que o valor do cargo esteja entre as opções permitidas.</li>
+ *   <li>O método {@link #capitalizeCargo(String)} ajuda a padronizar o valor do cargo antes da validação.</li>
+ * </ul>
  * 
  * @author Maicon
  * @version 1.0
  */
 @Component
-public class ProfissionaisValidator {
+public class ProfissionaisValidator extends ValidatorBase<ProfissionaisDTO> {
 
-    private final Validator validator;
     private final List<String> validCargos = List.of("Desenvolvedor", "Designer", "Suporte", "Tester");
 
     /**
      * Construtor para inicializar o validador com uma instância de {@link Validator}.
-     * 
+     *
      * @param validator Instância do validador do Jakarta Bean Validation.
      */
     public ProfissionaisValidator(Validator validator) {
-        this.validator = validator;
+        super(validator);
     }
 
     /**
      * Valida os dados do profissional fornecido, incluindo a validação do cargo.
-     * 
+     *
      * @param profissional Dados do profissional a serem validados.
-     * @return ApiResponse com o resultado da validação do cargo.
+     * @return ApiRestResponse com o resultado da validação do cargo.
      * @throws IllegalArgumentException se os dados do profissional forem inválidos.
      */
     public ApiRestResponse validate(ProfissionaisDTO profissional) {
@@ -54,24 +57,14 @@ public class ProfissionaisValidator {
         if (!validCargos.contains(normalizedCargo)) {
             return new ApiRestResponse(false, "O cargo do profissional deve ser: Desenvolvedor, Designer, Suporte ou Tester.");
         }
-        
+
         profissional.setCargo(normalizedCargo);
-
-        Set<ConstraintViolation<ProfissionaisDTO>> violations = validator.validate(profissional);
-        if (!violations.isEmpty()) {
-            StringBuilder errorMessage = new StringBuilder("Erros de validação: ");
-            for (ConstraintViolation<ProfissionaisDTO> violation : violations) {
-                errorMessage.append(violation.getPropertyPath()).append(" - ").append(violation.getMessage()).append(".");
-            }
-            throw new IllegalArgumentException(errorMessage.toString());
-        }
-
-        return new ApiRestResponse(true, "Validação realizada com sucesso.");
+        return validateBase(profissional);
     }
-    
+
     /**
      * Normaliza o texto do cargo para capitalizar a primeira letra de cada palavra.
-     * 
+     *
      * @param cargo O cargo fornecido pelo usuário.
      * @return O cargo normalizado com a primeira letra maiúscula.
      */

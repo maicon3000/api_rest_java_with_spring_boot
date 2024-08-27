@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import br.com.maicon.model.Profissionais;
+import br.com.maicon.models.Profissionais;
 
 /**
  * Interface responsável por fornecer métodos de acesso ao banco de dados
@@ -70,7 +70,7 @@ public interface ProfissionaisRepository extends JpaRepository<Profissionais, Lo
      * @param id O ID do profissional a ser buscado.
      * @return Um {@link Optional} contendo o profissional encontrado, ou vazio se não encontrado.
      */
-    @Query("SELECT p FROM Profissionais p WHERE p.id = :id AND p.deleted = false ORDER BY id")
+    @Query("SELECT p FROM Profissionais p WHERE p.id = :id AND p.deleted = false")
     Optional<Profissionais> findByIdAndActive(@Param("id") Long id);
 
     /**
@@ -84,9 +84,9 @@ public interface ProfissionaisRepository extends JpaRepository<Profissionais, Lo
      * @return Uma lista de profissionais que correspondam ao termo de pesquisa fornecido.
      */
 	@Query("SELECT p FROM Profissionais p WHERE "
-     + "LOWER(p.nome) LIKE LOWER(CONCAT('%', :q, '%')) "
-     + "OR LOWER(p.cargo) LIKE LOWER(CONCAT('%', :q, '%'))"
-     + "OR TO_CHAR(p.nascimento, 'YYYY-MM-DD') LIKE CONCAT('%', :q, '%')"
-     + "AND p.deleted = false ORDER BY id")
+		     + "LOWER(p.nome) LIKE LOWER(CONCAT('%', :q, '%')) "
+		     + "OR LOWER(p.cargo) LIKE LOWER(CONCAT('%', :q, '%'))"
+		     + "OR TO_CHAR(p.nascimento, 'YYYY-MM-DD') LIKE CONCAT('%', :q, '%')"
+		     + "AND p.deleted = false ORDER BY p.id")
 	List<Profissionais> findByQuery(@Param("q") String q);
 }

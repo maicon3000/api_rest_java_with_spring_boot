@@ -1,4 +1,4 @@
-package br.com.maicon.model;
+package br.com.maicon.models;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -44,7 +44,7 @@ import lombok.Data;
  */
 @Data
 @Entity
-@Table(name = "profissionais")
+@Table(name = "Profissionais")
 public class Profissionais implements Serializable {
 
     private static final long serialVersionUID = 1L;

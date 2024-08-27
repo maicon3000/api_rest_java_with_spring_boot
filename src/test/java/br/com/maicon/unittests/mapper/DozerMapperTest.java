@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import br.com.maicon.data.dto.v1.ProfissionaisDTO;
 import br.com.maicon.mapper.DozerMapper;
-import br.com.maicon.model.Profissionais;
+import br.com.maicon.models.Profissionais;
 import br.com.maicon.unittests.mapper.mocks.MockProfissionais;
 
 public class DozerMapperTest {

@@ -16,7 +16,7 @@ import org.mockito.MockitoAnnotations;
 import br.com.maicon.data.dto.v1.ProfissionaisDTO;
 import br.com.maicon.exception.ResourceNotFoundException;
 import br.com.maicon.mapper.DozerMapper;
-import br.com.maicon.model.Profissionais;
+import br.com.maicon.models.Profissionais;
 import br.com.maicon.repositories.ProfissionaisRepository;
 import br.com.maicon.services.ProfissionaisService;
 import br.com.maicon.services.validation.ProfissionaisValidator;
