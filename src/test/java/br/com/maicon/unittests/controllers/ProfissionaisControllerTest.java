@@ -1,6 +1,3 @@
-/**
- * 
- */
 package br.com.maicon.unittests.controllers;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -12,8 +9,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Arrays;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,117 +22,187 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import br.com.maicon.controllers.ProfissionaisController;
 import br.com.maicon.data.dto.v1.ProfissionaisDTO;
+import br.com.maicon.data.dto.v1.utils.DtoUtils;
 import br.com.maicon.services.ProfissionaisService;
 import br.com.maicon.utils.ApiResponse;
 
-public class ProfissionaisControllerTest {
-
-    @Mock
-    private ProfissionaisService service;
-
-    @InjectMocks
-    private ProfissionaisController controller;
+class ProfissionaisControllerTest {
 
     private MockMvc mockMvc;
 
-    private ObjectMapper objectMapper;
+    String mockDateString = LocalDate.of(2000, 1, 1).toString();
+
+    @Mock
+    private ProfissionaisService profissionaisService;
+
+    @InjectMocks
+    private ProfissionaisController profissionaisController;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
-        objectMapper = new ObjectMapper();
+        mockMvc = MockMvcBuilders.standaloneSetup(profissionaisController).build();
     }
 
     @Test
     void testFindAll() throws Exception {
         // Arrange
-        ProfissionaisDTO dto1 = new ProfissionaisDTO();
-        dto1.setId(1L);
-        ProfissionaisDTO dto2 = new ProfissionaisDTO();
-        dto2.setId(2L);
-        List<ProfissionaisDTO> dtos = Arrays.asList(dto1, dto2);
-
-        when(service.findAll()).thenReturn(dtos);
-        
+        ProfissionaisDTO profissionalDTO = new ProfissionaisDTO();
+        profissionalDTO.setId(1L);
+        profissionalDTO.setNome("Nome Teste");
+        when(profissionaisService.findAll(null)).thenReturn(List.of(profissionalDTO));
 
         // Act & Assert
-        mockMvc.perform(get("/profissionais")
+        mockMvc.perform(get("/api/profissionais/v1")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1L))
-                .andExpect(jsonPath("$[1].id").value(2L));
+                .andExpect(jsonPath("$[0].nome").value("Nome Teste"));
+    }
+
+    @Test
+    void testFindAllWithQuery() throws Exception {
+        // Arrange
+        ProfissionaisDTO profissionalDTO = new ProfissionaisDTO();
+        profissionalDTO.setId(1L);
+        profissionalDTO.setNome("Nome Teste");
+        when(profissionaisService.findAll("Nome")).thenReturn(List.of(profissionalDTO));
+
+        // Act & Assert
+        mockMvc.perform(get("/api/profissionais/v1")
+                .param("q", "Nome")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1L))
+                .andExpect(jsonPath("$[0].nome").value("Nome Teste"));
+    }
+
+    @Test
+    void testFindAllWithFields() throws Exception {
+        // Arrange
+        ProfissionaisDTO profissionalDTO = new ProfissionaisDTO();
+        profissionalDTO.setId(1L);
+        profissionalDTO.setNome("Nome Teste");
+        List<String> fields = List.of("id", "nome");
+        Map<String, Object> filteredFields = DtoUtils.filterFields(profissionalDTO, fields);
+        when(profissionaisService.findAll(null)).thenReturn(List.of(profissionalDTO));
+
+        // Act & Assert
+        mockMvc.perform(get("/api/profissionais/v1")
+                .param("fields", "id,nome")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(filteredFields.get("id")))
+                .andExpect(jsonPath("$[0].nome").value(filteredFields.get("nome")));
     }
 
     @Test
     void testFindById() throws Exception {
         // Arrange
-        ProfissionaisDTO dto = new ProfissionaisDTO();
-        dto.setId(1L);
-
-        when(service.findById(1L)).thenReturn(dto);
+        ProfissionaisDTO profissionalDTO = new ProfissionaisDTO();
+        profissionalDTO.setId(1L);
+        profissionalDTO.setNome("Nome Teste");
+        when(profissionaisService.findById(1L)).thenReturn(profissionalDTO);
 
         // Act & Assert
-        mockMvc.perform(get("/profissionais/1")
+        mockMvc.perform(get("/api/profissionais/v1/1")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L));
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.nome").value("Nome Teste"));
     }
 
     @Test
     void testCreate() throws Exception {
         // Arrange
-        ProfissionaisDTO dto = new ProfissionaisDTO();
-        dto.setNome("Nome Teste");
-
-        ApiResponse response = new ApiResponse(true, "Profissional criado com sucesso!");
-
-        when(service.create(any(ProfissionaisDTO.class))).thenReturn(response);
+        ProfissionaisDTO profissionalDTO = new ProfissionaisDTO();
+        profissionalDTO.setNome("Nome Teste");
+        ApiResponse apiResponse = new ApiResponse(true, "Profissional cadastrado com sucesso!");
+        when(profissionaisService.create(any(ProfissionaisDTO.class))).thenReturn(apiResponse);
 
         // Act & Assert
-        mockMvc.perform(post("/profissionais")
+        mockMvc.perform(post("/api/profissionais/v1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                .content("{\"nome\":\"Nome Teste\",\"cargo\":\"Desenvolvedor\",\"nascimento\":\"" + mockDateString + "\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.message").value("Profissional criado com sucesso!"));
+                .andExpect(jsonPath("$.message").value("Profissional cadastrado com sucesso!"));
+    }
+
+    @Test
+    void testCreate_InvalidData() throws Exception {
+        // Arrange
+        ApiResponse apiResponse = new ApiResponse(false, "Dados inválidos!");
+        when(profissionaisService.create(any(ProfissionaisDTO.class))).thenReturn(apiResponse);
+
+        // Act & Assert
+        mockMvc.perform(post("/api/profissionais/v1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"nome\":\"\",\"cargo\":\"Desenvolvedor\",\"nascimento\":\"" + mockDateString + "\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("Dados inválidos!"));
     }
 
     @Test
     void testUpdate() throws Exception {
         // Arrange
-        ProfissionaisDTO dto = new ProfissionaisDTO();
-        dto.setId(1L);
-        ApiResponse apiResponse = new ApiResponse(true, "Atualizado com sucesso");
+        ApiResponse apiResponse = new ApiResponse(true, "Cadastro atualizado com sucesso!");
 
-        when(service.update(any(ProfissionaisDTO.class))).thenReturn(apiResponse);
+        when(profissionaisService.update(any(ProfissionaisDTO.class))).thenReturn(apiResponse);
 
         // Act & Assert
-        mockMvc.perform(put("/profissionais/{id}", 1)
+        mockMvc.perform(put("/api/profissionais/v1/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"nome\": \"Novo Nome\" }"))
+                .content("{\"nome\":\"Nome Atualizado\",\"cargo\":\"Designer\",\"nascimento\":\"" + mockDateString + "\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.message").value("Atualizado com sucesso"));
+                .andExpect(jsonPath("$.message").value("Cadastro atualizado com sucesso!"));
+    }
+
+    @Test
+    void testUpdate_InvalidData() throws Exception {
+        // Arrange
+        ApiResponse apiResponse = new ApiResponse(false, "O cargo do profissional deve ser: Desenvolvedor, Designer, Suporte ou Tester.");
+
+        when(profissionaisService.update(any(ProfissionaisDTO.class))).thenReturn(apiResponse);
+
+        // Act & Assert
+        mockMvc.perform(put("/api/profissionais/v1/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"nome\":\"Nome Inválido\",\"cargo\":\"Cargo Inválido\",\"nascimento\":\"" + mockDateString + "\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("O cargo do profissional deve ser: Desenvolvedor, Designer, Suporte ou Tester."));
     }
 
     @Test
     void testDelete() throws Exception {
         // Arrange
-        ApiResponse response = new ApiResponse(true, "Profissional excluído com sucesso!");
-
-        when(service.delete(1L)).thenReturn(response);
+        ApiResponse apiResponse = new ApiResponse(true, "Profissional excluído com sucesso!");
+        when(profissionaisService.delete(1L)).thenReturn(apiResponse);
 
         // Act & Assert
-        mockMvc.perform(delete("/profissionais/1")
+        mockMvc.perform(delete("/api/profissionais/v1/1")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("Profissional excluído com sucesso!"));
     }
-}
 
+    @Test
+    void testDelete_NotFound() throws Exception {
+        // Arrange
+        ApiResponse apiResponse = new ApiResponse(false, "Profissional não encontrado!");
+        when(profissionaisService.delete(1L)).thenReturn(apiResponse);
+
+        // Act & Assert
+        mockMvc.perform(delete("/api/profissionais/v1/1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("Profissional não encontrado!"));
+    }
+}

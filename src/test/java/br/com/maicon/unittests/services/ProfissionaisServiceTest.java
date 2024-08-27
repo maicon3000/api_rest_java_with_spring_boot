@@ -67,6 +67,48 @@ class ProfissionaisServiceTest {
     }
 
     @Test
+    void testFindAllWithQuery() {
+        // Arrange
+        when(profissionaisRepository.findByQuery("Nome")).thenReturn(List.of(profissional));
+
+        // Act
+        List<ProfissionaisDTO> result = profissionaisService.findAll("Nome");
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(profissionalDto.getId(), result.get(0).getId());
+    }
+    
+    @Test
+    void testFindAllWithEmptyQuery() {
+        // Arrange
+        when(profissionaisRepository.findAllActive()).thenReturn(List.of(profissional));
+
+        // Act
+        List<ProfissionaisDTO> result = profissionaisService.findAll("");
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(profissionalDto.getId(), result.get(0).getId());
+    }
+
+    @Test
+    void testFindAllWithNullQuery() {
+        // Arrange
+        when(profissionaisRepository.findAllActive()).thenReturn(List.of(profissional));
+
+        // Act
+        List<ProfissionaisDTO> result = profissionaisService.findAll(null);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(profissionalDto.getId(), result.get(0).getId());
+    }
+
+    @Test
     void testFindById() {
         // Arrange
         when(profissionaisRepository.findByIdAndActive(1L)).thenReturn(Optional.of(profissional));
@@ -91,6 +133,8 @@ class ProfissionaisServiceTest {
     @Test
     void testCreate() {
         // Arrange
+        when(profissionaisValidator.validate(any(ProfissionaisDTO.class)))
+            .thenReturn(new ApiResponse(true, "Validado com sucesso"));
         when(profissionaisRepository.save(any(Profissionais.class))).thenReturn(profissional);
 
         // Act
@@ -104,9 +148,27 @@ class ProfissionaisServiceTest {
     }
 
     @Test
+    void testCreate_InvalidData() {
+        // Arrange
+        when(profissionaisValidator.validate(any(ProfissionaisDTO.class)))
+            .thenReturn(new ApiResponse(false, "Falha na validação"));
+
+        // Act
+        ApiResponse response = profissionaisService.create(profissionalDto);
+
+        // Assert
+        verify(profissionaisValidator, times(1)).validate(profissionalDto);
+        assertNotNull(response);
+        assertFalse(response.isSuccess());
+        assertEquals("Falha na validação", response.getMessage());
+    }
+
+    @Test
     void testUpdate() {
         // Arrange
-        when(profissionaisRepository.existsById(1L)).thenReturn(true);
+        when(profissionaisValidator.validate(any(ProfissionaisDTO.class)))
+            .thenReturn(new ApiResponse(true, "Validado com sucesso"));
+        when(profissionaisRepository.findByIdAndActive(1L)).thenReturn(Optional.of(profissional));
         when(profissionaisRepository.save(any(Profissionais.class))).thenReturn(profissional);
 
         // Act
@@ -120,9 +182,27 @@ class ProfissionaisServiceTest {
     }
 
     @Test
+    void testUpdate_InvalidData() {
+        // Arrange
+        when(profissionaisValidator.validate(any(ProfissionaisDTO.class)))
+            .thenReturn(new ApiResponse(false, "Falha na validação"));
+
+        // Act
+        ApiResponse response = profissionaisService.update(profissionalDto);
+
+        // Assert
+        verify(profissionaisValidator, times(1)).validate(profissionalDto);
+        assertNotNull(response);
+        assertFalse(response.isSuccess());
+        assertEquals("Falha na validação", response.getMessage());
+    }
+
+    @Test
     void testUpdate_ResourceNotFoundException() {
         // Arrange
-        when(profissionaisRepository.existsById(1L)).thenReturn(false);
+        when(profissionaisValidator.validate(any(ProfissionaisDTO.class)))
+            .thenReturn(new ApiResponse(true, "Validado com sucesso"));
+        when(profissionaisRepository.findByIdAndActive(1L)).thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(ResourceNotFoundException.class, () -> profissionaisService.update(profissionalDto));
@@ -161,4 +241,3 @@ class ProfissionaisServiceTest {
         assertThrows(ResourceNotFoundException.class, () -> profissionaisService.delete(1L));
     }
 }
-

@@ -1,6 +1,6 @@
 package br.com.maicon.unittests.services.validation;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Date;
@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import br.com.maicon.data.dto.v1.ProfissionaisDTO;
 import br.com.maicon.services.validation.ProfissionaisValidator;
+import br.com.maicon.utils.ApiResponse;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
@@ -35,15 +36,36 @@ public class ProfissionaisValidatorTest {
         profissional.setNascimento(new Date());
         profissional.setCreatedDate(new Date());
 
-        // Act & Assert
-        assertDoesNotThrow(() -> profissionaisValidator.validate(profissional));
+        // Act
+        ApiResponse response = profissionaisValidator.validate(profissional);
+
+        // Assert
+        assertEquals(true, response.isSuccess());
+        assertEquals("Validação realizada com sucesso.", response.getMessage());
     }
 
     @Test
-    public void testValidateInvalidProfissional() {
+    public void testValidateInvalidCargoProfissional() {
         // Arrange
         ProfissionaisDTO profissional = new ProfissionaisDTO();
-        // Nome não definido (nulo), o que é inválido
+        profissional.setNome("Nome Válido");
+        profissional.setCargo("Cargo inválido");
+        profissional.setNascimento(new Date());
+        profissional.setCreatedDate(new Date());
+
+        // Act
+        ApiResponse response = profissionaisValidator.validate(profissional);
+
+        // Assert
+        assertEquals(false, response.isSuccess());
+        assertEquals("O cargo do profissional deve ser: Desenvolvedor, Designer, Suporte ou Tester.", response.getMessage());
+    }
+
+    @Test
+    public void testValidateInvalidNameProfissional() {
+        // Arrange
+        ProfissionaisDTO profissional = new ProfissionaisDTO();
+        profissional.setCargo("Desenvolvedor");
 
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> profissionaisValidator.validate(profissional));
@@ -53,13 +75,16 @@ public class ProfissionaisValidatorTest {
     public void testValidateEmptyNomeProfissional() {
         // Arrange
         ProfissionaisDTO profissional = new ProfissionaisDTO();
-        profissional.setNome(""); // Nome vazio, o que é inválido
-        profissional.setCargo("Desenvolvedor");
+        profissional.setNome("Dummy");
+        profissional.setCargo("");
         profissional.setNascimento(new Date());
         profissional.setCreatedDate(new Date());
 
-        // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> profissionaisValidator.validate(profissional));
+        // Act
+        ApiResponse response = profissionaisValidator.validate(profissional);
+
+        // Assert
+        assertEquals(false, response.isSuccess());
+        assertEquals("O cargo do profissional deve ser: Desenvolvedor, Designer, Suporte ou Tester.", response.getMessage());
     }
 }
-

@@ -14,6 +14,7 @@ class ExceptionResponseTest {
     void testExceptionResponse() {
         // Arrange
         Date now = new Date();
+        Boolean success = false;
         String message = "Test message";
         String details = "Test details";
 
@@ -22,6 +23,7 @@ class ExceptionResponseTest {
 
         // Assert
         assertEquals(now, response.getTimestamp());
+        assertEquals(success, response.getSuccess());
         assertEquals(message, response.getMessage());
         assertEquals(details, response.getDetails());
     }

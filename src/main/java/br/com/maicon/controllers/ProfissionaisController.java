@@ -65,7 +65,6 @@ public class ProfissionaisController {
 
         List<ProfissionaisDTO> profissionais = service.findAll(q);
 
-        // Se fields estiver presente, filtrar os campos
         if (fields != null && !fields.isEmpty()) {
             List<Map<String, Object>> filteredResponse = profissionais.stream()
                 .map(profissional -> DtoUtils.filterFields (profissional, fields))
@@ -73,7 +72,6 @@ public class ProfissionaisController {
             return ResponseEntity.ok(filteredResponse);
         }
 
-        // Retornar todos os campos se fields não estiver presente
         return ResponseEntity.ok(profissionais.stream()
                 .map(DtoUtils::convertToMap)
                 .collect(Collectors.toList()));
