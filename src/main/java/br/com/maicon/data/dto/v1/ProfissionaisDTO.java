@@ -4,9 +4,11 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import br.com.maicon.model.Profissionais;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
@@ -53,17 +55,19 @@ public class ProfissionaisDTO implements Serializable {
     /**
      * Nome completo do profissional.
      */
-    @NotBlank(message = "O nome do profissional não pode ser vazio ou nulo.")
+    @NotBlank
     private String nome;
 
     /**
      * Cargo ou posição ocupada pelo profissional dentro da organização.
      */
+    @NotBlank
     private String cargo;
 
     /**
      * Data de nascimento do profissional.
      */
+    @NotNull
     private Date nascimento;
 
     /**
@@ -82,4 +86,14 @@ public class ProfissionaisDTO implements Serializable {
      */
     @JsonIgnore
     private Date deletedDate;
+    
+    @JsonIgnore
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+    
+    @JsonProperty("createdDate")
+    public Date getCreatedDate() {
+        return createdDate;
+    }
 }

@@ -29,7 +29,7 @@ import jakarta.validation.Valid;
  * @version 1.0
  */
 @RestController
-@RequestMapping("profissionais")
+@RequestMapping("/api/profissionais/v1")
 public class ProfissionaisController {
 
     private final ProfissionaisService service;
@@ -80,9 +80,13 @@ public class ProfissionaisController {
      * @return Resposta contendo o status da operação e uma mensagem de sucesso.
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody ProfissionaisDTO profissional) {
+    public ResponseEntity<ApiResponse> create(@RequestBody ProfissionaisDTO profissional) {
         ApiResponse response = service.create(profissional);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        if (response.isSuccess()) {
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
     }
 
     /**
@@ -102,7 +106,11 @@ public class ProfissionaisController {
     public ResponseEntity<ApiResponse> update(@PathVariable Long id, @Valid @RequestBody ProfissionaisDTO profissional) {
         profissional.setId(id);
         ApiResponse response = service.update(profissional);
-        return ResponseEntity.ok(response);
+        if (response.isSuccess()) {
+            return ResponseEntity.ok(response);
+        } else {
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
     }
 
     /**

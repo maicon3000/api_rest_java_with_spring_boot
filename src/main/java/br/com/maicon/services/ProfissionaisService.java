@@ -1,5 +1,7 @@
 package br.com.maicon.services;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -87,19 +89,24 @@ public class ProfissionaisService {
      * Cria um novo profissional no sistema.
      * 
      * <p>O profissional deve passar pela validação antes de ser salvo. Se a validação falhar, 
-     * uma exceção {@link IllegalArgumentException} será lançada.</p>
+     * uma resposta de erro será retornada indicando a falha de validação.</p>
      * 
      * <p>Este método utiliza o {@link DozerMapper} para converter o {@link ProfissionaisDTO} 
      * em uma entidade {@link Profissionais} antes de persistir no banco de dados e novamente 
      * para {@link ProfissionaisDTO} após a criação.</p>
      * 
      * @param professional Dados do profissional a ser criado.
-     * @return Resposta contendo o sucesso da operação de criação, incluindo o ID do profissional criado.
+     * @return Resposta contendo o sucesso ou falha da operação de criação, incluindo o ID do profissional criado em caso de sucesso.
      * @throws IllegalArgumentException se os dados do profissional forem inválidos.
      */
     public ApiResponse create(ProfissionaisDTO professional) {
-    	profissionaisValidator.validate(professional);
+        ApiResponse validationResponse = profissionaisValidator.validate(professional);
+        if (!validationResponse.isSuccess()) {
+            return validationResponse;
+        }
         
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo"));
+        professional.setCreatedDate(Date.from(now.toInstant()));        
         var converterProfessional = DozerMapper.parseObject(professional, Profissionais.class);
         var createdProfessional = DozerMapper.parseObject(profissionaisRepository.save(converterProfessional), ProfissionaisDTO.class);
 
@@ -112,7 +119,7 @@ public class ProfissionaisService {
      * Atualiza os dados de um profissional existente.
      * 
      * <p>O profissional deve passar pela validação antes de ser atualizado. Se a validação falhar, 
-     * uma exceção {@link IllegalArgumentException} será lançada. Se o ID não corresponder a 
+     * uma resposta de erro será retornada indicando a falha de validação. Se o ID não corresponder a 
      * nenhum profissional existente, uma exceção {@link ResourceNotFoundException} será lançada.</p>
      * 
      * <p>Este método utiliza o {@link DozerMapper} para converter o {@link ProfissionaisDTO} 
@@ -120,16 +127,19 @@ public class ProfissionaisService {
      * o profissional atualizado é convertido de volta para {@link ProfissionaisDTO} para consistência de dados.</p>
      * 
      * @param professional Dados do profissional a ser atualizado.
-     * @return Resposta contendo o sucesso da operação de atualização.
+     * @return Resposta contendo o sucesso ou falha da operação de atualização.
      * @throws IllegalArgumentException se os dados do profissional forem inválidos.
      * @throws ResourceNotFoundException se o profissional não for encontrado para atualização.
      */
     public ApiResponse update(ProfissionaisDTO professional) {
-    	profissionaisValidator.validate(professional);
+        ApiResponse validationResponse = profissionaisValidator.validate(professional);
+        if (!validationResponse.isSuccess()) {
+            return validationResponse;
+        }
         
-        if(profissionaisRepository.existsById(professional.getId())) {
-        	logger.info("Updating professional with ID " + professional.getId());
-        	var converterProfessional = DozerMapper.parseObject(professional, Profissionais.class);
+        if (profissionaisRepository.existsById(professional.getId())) {
+            logger.info("Updating professional with ID " + professional.getId());
+            var converterProfessional = DozerMapper.parseObject(professional, Profissionais.class);
             DozerMapper.parseObject(profissionaisRepository.save(converterProfessional), ProfissionaisDTO.class);
             return new ApiResponse(true, "Cadastro alterado com sucesso!");
         } else {

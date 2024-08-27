@@ -9,16 +9,17 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.Data;
-import jakarta.validation.constraints.NotBlank;
 
 /**
  * Representa a entidade "Profissionais" no sistema.
  * 
  * <p>
  * Esta classe está mapeada para a tabela "profissionais" no banco de dados.
- * Ela contém informações sobre profissionais, incluindo seu nome, cargo, data de nascimento
- * e a data de criação do registro.
+ * Ela contém informações sobre profissionais, incluindo seu nome, cargo, data de nascimento,
+ * data de criação do registro, informação se o registro foi deletado e data de deleção do registro.
  * </p>
  * 
  * <b>Campos:</b>
@@ -50,51 +51,44 @@ public class Profissionais implements Serializable {
 
     /**
      * Identificador único do profissional.
-     * Este campo é a chave primária e é gerado automaticamente.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
-     * Nome do profissional.
-     * Mapeado para a coluna "nome" na tabela "profissionais".
+     * Nome completo do profissional.
      */
-    @NotBlank(message = "O nome do profissional não pode ser vazio ou apenas espaços em branco.")
     @Column(name = "nome", nullable = false)
     private String nome;
 
     /**
-     * Cargo ou posição do profissional.
-     * Mapeado para a coluna "cargo" na tabela "profissionais".
+     * Cargo ou posição ocupada pelo profissional dentro da organização.
      */
     @Column(name = "cargo", nullable = false)
     private String cargo;
 
     /**
      * Data de nascimento do profissional.
-     * Mapeado para a coluna "nascimento" na tabela "profissionais".
      */
     @Column(name = "nascimento", nullable = false)
     private Date nascimento;
 
     /**
-     * Data em que o registro do profissional foi criado.
-     * Mapeado para a coluna "created_date" na tabela "profissionais".
+     * Data em que o registro do profissional foi criado no sistema.
      */
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_date", nullable = false)
     private Date createdDate;
     
     /**
-     * Campo que informa se o registro do profissional foi deletado.
-     * Mapeado para a coluna "deleted" na tabela "profissionais".
+     * Indica se o profissional foi marcado como deletado (exclusão lógica).
      */
     @Column(name = "deleted")
     private boolean deleted;
     
     /**
-     * Data em que o registro do profissional foi deletado.
-     * Mapeado para a coluna "deleted_date" na tabela "profissionais".
+     * Data em que o profissional foi marcado como deletado.
      */
     @Column(name = "deleted_date")
     private Date deletedDate;
