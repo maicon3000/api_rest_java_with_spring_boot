@@ -24,7 +24,7 @@ import lombok.Data;
  * @version 1.0
  */
 @Data
-public class ApiResponse {
+public class ApiRestResponse {
     
     /**
      * Indica se a operação foi bem-sucedida ou não de acordo com regras de negócio definidas.
@@ -42,7 +42,7 @@ public class ApiResponse {
      * @param success Indica se a operação foi bem-sucedida ou não de acordo com regras de negócio definidas.
      * @param message Mensagem descritiva do resultado da operação
      */
-    public ApiResponse(boolean success, String message) {
+    public ApiRestResponse(boolean success, String message) {
         this.success = success;
         this.message = message;
     }

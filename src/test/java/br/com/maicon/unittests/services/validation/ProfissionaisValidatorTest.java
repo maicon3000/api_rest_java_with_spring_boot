@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import br.com.maicon.data.dto.v1.ProfissionaisDTO;
 import br.com.maicon.services.validation.ProfissionaisValidator;
-import br.com.maicon.utils.ApiResponse;
+import br.com.maicon.utils.ApiRestResponse;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
@@ -37,7 +37,7 @@ public class ProfissionaisValidatorTest {
         profissional.setCreatedDate(new Date());
 
         // Act
-        ApiResponse response = profissionaisValidator.validate(profissional);
+        ApiRestResponse response = profissionaisValidator.validate(profissional);
 
         // Assert
         assertEquals(true, response.isSuccess());
@@ -54,7 +54,7 @@ public class ProfissionaisValidatorTest {
         profissional.setCreatedDate(new Date());
 
         // Act
-        ApiResponse response = profissionaisValidator.validate(profissional);
+        ApiRestResponse response = profissionaisValidator.validate(profissional);
 
         // Assert
         assertEquals(false, response.isSuccess());
@@ -81,7 +81,7 @@ public class ProfissionaisValidatorTest {
         profissional.setCreatedDate(new Date());
 
         // Act
-        ApiResponse response = profissionaisValidator.validate(profissional);
+        ApiRestResponse response = profissionaisValidator.validate(profissional);
 
         // Assert
         assertEquals(false, response.isSuccess());

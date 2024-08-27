@@ -26,7 +26,7 @@ import br.com.maicon.controllers.ProfissionaisController;
 import br.com.maicon.data.dto.v1.ProfissionaisDTO;
 import br.com.maicon.data.dto.v1.utils.DtoUtils;
 import br.com.maicon.services.ProfissionaisService;
-import br.com.maicon.utils.ApiResponse;
+import br.com.maicon.utils.ApiRestResponse;
 
 class ProfissionaisControllerTest {
 
@@ -119,7 +119,7 @@ class ProfissionaisControllerTest {
         // Arrange
         ProfissionaisDTO profissionalDTO = new ProfissionaisDTO();
         profissionalDTO.setNome("Nome Teste");
-        ApiResponse apiResponse = new ApiResponse(true, "Profissional cadastrado com sucesso!");
+        ApiRestResponse apiResponse = new ApiRestResponse(true, "Profissional cadastrado com sucesso!");
         when(profissionaisService.create(any(ProfissionaisDTO.class))).thenReturn(apiResponse);
 
         // Act & Assert
@@ -134,7 +134,7 @@ class ProfissionaisControllerTest {
     @Test
     void testCreate_InvalidData() throws Exception {
         // Arrange
-        ApiResponse apiResponse = new ApiResponse(false, "Dados inválidos!");
+        ApiRestResponse apiResponse = new ApiRestResponse(false, "Dados inválidos!");
         when(profissionaisService.create(any(ProfissionaisDTO.class))).thenReturn(apiResponse);
 
         // Act & Assert
@@ -149,7 +149,7 @@ class ProfissionaisControllerTest {
     @Test
     void testUpdate() throws Exception {
         // Arrange
-        ApiResponse apiResponse = new ApiResponse(true, "Cadastro atualizado com sucesso!");
+        ApiRestResponse apiResponse = new ApiRestResponse(true, "Cadastro atualizado com sucesso!");
 
         when(profissionaisService.update(any(ProfissionaisDTO.class))).thenReturn(apiResponse);
 
@@ -165,7 +165,7 @@ class ProfissionaisControllerTest {
     @Test
     void testUpdate_InvalidData() throws Exception {
         // Arrange
-        ApiResponse apiResponse = new ApiResponse(false, "O cargo do profissional deve ser: Desenvolvedor, Designer, Suporte ou Tester.");
+        ApiRestResponse apiResponse = new ApiRestResponse(false, "O cargo do profissional deve ser: Desenvolvedor, Designer, Suporte ou Tester.");
 
         when(profissionaisService.update(any(ProfissionaisDTO.class))).thenReturn(apiResponse);
 
@@ -181,7 +181,7 @@ class ProfissionaisControllerTest {
     @Test
     void testDelete() throws Exception {
         // Arrange
-        ApiResponse apiResponse = new ApiResponse(true, "Profissional excluído com sucesso!");
+        ApiRestResponse apiResponse = new ApiRestResponse(true, "Profissional excluído com sucesso!");
         when(profissionaisService.delete(1L)).thenReturn(apiResponse);
 
         // Act & Assert
@@ -195,7 +195,7 @@ class ProfissionaisControllerTest {
     @Test
     void testDelete_NotFound() throws Exception {
         // Arrange
-        ApiResponse apiResponse = new ApiResponse(false, "Profissional não encontrado!");
+        ApiRestResponse apiResponse = new ApiRestResponse(false, "Profissional não encontrado!");
         when(profissionaisService.delete(1L)).thenReturn(apiResponse);
 
         // Act & Assert

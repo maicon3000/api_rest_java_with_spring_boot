@@ -20,7 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.maicon.data.dto.v1.ProfissionaisDTO;
 import br.com.maicon.data.dto.v1.utils.DtoUtils;
 import br.com.maicon.services.ProfissionaisService;
-import br.com.maicon.utils.ApiResponse;
+import br.com.maicon.utils.ApiRestResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 /**
@@ -34,6 +40,7 @@ import jakarta.validation.Valid;
  */
 @RestController
 @RequestMapping("/api/profissionais/v1")
+@Tag(name = "Profissionais", description = "Endpoint for managing professionals")
 public class ProfissionaisController {
 
     private final ProfissionaisService service;
@@ -59,6 +66,17 @@ public class ProfissionaisController {
      * @return Lista de profissionais cadastrados, possivelmente filtrada pelos campos especificados.
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Finds all professionals", description = "Finds all professionals",
+        tags = {"Profissionais"},
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Success",
+                content = @Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = ProfissionaisDTO.class)))),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal Error", content = @Content)
+        }
+    )
     public ResponseEntity<List<Map<String, Object>>> findAll(
         @RequestParam(required = false) String q,
         @RequestParam(required = false) List<String> fields) {
@@ -88,6 +106,16 @@ public class ProfissionaisController {
      * @throws br.com.maicon.exception.ResourceNotFoundException se o profissional não for encontrado.
      */
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Finds a professional", description = "Finds a professional",
+    tags = {"Profissionais"},
+    responses = {
+        @ApiResponse(responseCode = "200", description = "Success",
+            content = @Content(schema = @Schema(implementation = ProfissionaisDTO.class))),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
+        @ApiResponse(responseCode = "500", description = "Internal Error", content = @Content)
+	    }
+	)
     public ProfissionaisDTO findById(@PathVariable Long id) {
         return service.findById(id);
     }
@@ -103,8 +131,17 @@ public class ProfissionaisController {
      * @return Resposta contendo o status da operação e uma mensagem de sucesso.
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> create(@RequestBody ProfissionaisDTO profissional) {
-        ApiResponse response = service.create(profissional);
+    @Operation(summary = "Adds a new professional", description = "Adds a new professional",
+    tags = {"Profissionais"},
+    responses = {
+        @ApiResponse(responseCode = "200", description = "Success",
+            content = @Content(schema = @Schema(implementation = ApiRestResponse.class))),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+        @ApiResponse(responseCode = "500", description = "Internal Error", content = @Content)
+	    }
+	)
+    public ResponseEntity<ApiRestResponse> create(@RequestBody ProfissionaisDTO profissional) {
+        ApiRestResponse response = service.create(profissional);
         if (response.isSuccess()) {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } else {
@@ -127,9 +164,18 @@ public class ProfissionaisController {
      * @throws br.com.maicon.exception.ResourceNotFoundException se o profissional não for encontrado.
      */
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> update(@PathVariable Long id, @Valid @RequestBody ProfissionaisDTO profissional) {
+    @Operation(summary = "Updates a professional", description = "Updates a professional",
+    tags = {"Profissionais"},
+    responses = {
+        @ApiResponse(responseCode = "200", description = "Updated",
+            content = @Content(schema = @Schema(implementation = ApiRestResponse.class))),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+        @ApiResponse(responseCode = "500", description = "Internal Error", content = @Content)
+	    }
+	)
+    public ResponseEntity<ApiRestResponse> update(@PathVariable Long id, @Valid @RequestBody ProfissionaisDTO profissional) {
         profissional.setId(id);
-        ApiResponse response = service.update(profissional);
+        ApiRestResponse response = service.update(profissional);
         if (response.isSuccess()) {
             return ResponseEntity.ok(response);
         } else {
@@ -150,8 +196,18 @@ public class ProfissionaisController {
      * @throws br.com.maicon.exception.ResourceNotFoundException se o profissional não for encontrado.
      */
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> delete(@PathVariable Long id) {
-        ApiResponse response = service.delete(id);
+    @Operation(summary = "Deletes a professional", description = "Deletes a professional",
+    tags = {"Profissionais"},
+    responses = {
+        @ApiResponse(responseCode = "200", description = "Success",
+            content = @Content(schema = @Schema(implementation = ApiRestResponse.class))),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
+        @ApiResponse(responseCode = "500", description = "Internal Error", content = @Content)
+	    }
+	)
+    public ResponseEntity<ApiRestResponse> delete(@PathVariable Long id) {
+        ApiRestResponse response = service.delete(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

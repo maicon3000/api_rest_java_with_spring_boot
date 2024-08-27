@@ -15,7 +15,7 @@ import br.com.maicon.mapper.DozerMapper;
 import br.com.maicon.model.Profissionais;
 import br.com.maicon.repositories.ProfissionaisRepository;
 import br.com.maicon.services.validation.ProfissionaisValidator;
-import br.com.maicon.utils.ApiResponse;
+import br.com.maicon.utils.ApiRestResponse;
 import jakarta.validation.Validator;
 
 /**
@@ -131,8 +131,8 @@ public class ProfissionaisService {
      * @return Resposta contendo o sucesso ou falha da operação de criação, incluindo o ID do profissional criado em caso de sucesso.
      * @throws IllegalArgumentException se os dados do profissional forem inválidos.
      */
-    public ApiResponse create(ProfissionaisDTO professional) {
-        ApiResponse validationResponse = profissionaisValidator.validate(professional);
+    public ApiRestResponse create(ProfissionaisDTO professional) {
+        ApiRestResponse validationResponse = profissionaisValidator.validate(professional);
         
         if (!validationResponse.isSuccess()) {
             return validationResponse;
@@ -145,7 +145,7 @@ public class ProfissionaisService {
 
         logger.info("Created professional with ID " + converterProfessional.getId());
 
-        return new ApiResponse(true, "Profissional com ID " + converterProfessional.getId() + " cadastrado com sucesso!");
+        return new ApiRestResponse(true, "Profissional com ID " + converterProfessional.getId() + " cadastrado com sucesso!");
     }
 
     /**
@@ -165,8 +165,8 @@ public class ProfissionaisService {
      * @throws IllegalArgumentException se os dados do profissional forem inválidos.
      * @throws ResourceNotFoundException se o profissional não for encontrado para atualização.
      */
-    public ApiResponse update(ProfissionaisDTO professional) {
-        ApiResponse validationResponse = profissionaisValidator.validate(professional);
+    public ApiRestResponse update(ProfissionaisDTO professional) {
+        ApiRestResponse validationResponse = profissionaisValidator.validate(professional);
         
         if (!validationResponse.isSuccess()) {
             return validationResponse;
@@ -182,7 +182,7 @@ public class ProfissionaisService {
         var converterProfessional = DozerMapper.parseObject(professional, Profissionais.class);
         profissionaisRepository.save(converterProfessional);
         
-        return new ApiResponse(true, "Cadastro alterado com sucesso!");
+        return new ApiRestResponse(true, "Cadastro alterado com sucesso!");
     }
     
     /**
@@ -194,7 +194,7 @@ public class ProfissionaisService {
      * @return Resposta contendo o sucesso da operação de deleção.
      * @throws ResourceNotFoundException se o profissional não for encontrado ou já estiver marcado como deletado.
      */
-    public ApiResponse delete(Long id) {
+    public ApiRestResponse delete(Long id) {
         String errorMessage = "Profissional não encontrado com o ID " + id;
 
         Profissionais profissional = profissionaisRepository.findById(id)
@@ -209,6 +209,6 @@ public class ProfissionaisService {
 
         profissionaisRepository.save(profissional);
         logger.info("Logically deleting professional with ID " + id + ": " + profissional.getNome());
-        return new ApiResponse(true, "Profissional excluído com sucesso!");
+        return new ApiRestResponse(true, "Profissional excluído com sucesso!");
     }
 }

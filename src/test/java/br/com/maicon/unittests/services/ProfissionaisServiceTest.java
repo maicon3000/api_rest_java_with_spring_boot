@@ -20,7 +20,7 @@ import br.com.maicon.model.Profissionais;
 import br.com.maicon.repositories.ProfissionaisRepository;
 import br.com.maicon.services.ProfissionaisService;
 import br.com.maicon.services.validation.ProfissionaisValidator;
-import br.com.maicon.utils.ApiResponse;
+import br.com.maicon.utils.ApiRestResponse;
 
 class ProfissionaisServiceTest {
 
@@ -134,11 +134,11 @@ class ProfissionaisServiceTest {
     void testCreate() {
         // Arrange
         when(profissionaisValidator.validate(any(ProfissionaisDTO.class)))
-            .thenReturn(new ApiResponse(true, "Validado com sucesso"));
+            .thenReturn(new ApiRestResponse(true, "Validado com sucesso"));
         when(profissionaisRepository.save(any(Profissionais.class))).thenReturn(profissional);
 
         // Act
-        ApiResponse response = profissionaisService.create(profissionalDto);
+        ApiRestResponse response = profissionaisService.create(profissionalDto);
 
         // Assert
         verify(profissionaisValidator, times(1)).validate(profissionalDto);
@@ -151,10 +151,10 @@ class ProfissionaisServiceTest {
     void testCreate_InvalidData() {
         // Arrange
         when(profissionaisValidator.validate(any(ProfissionaisDTO.class)))
-            .thenReturn(new ApiResponse(false, "Falha na validação"));
+            .thenReturn(new ApiRestResponse(false, "Falha na validação"));
 
         // Act
-        ApiResponse response = profissionaisService.create(profissionalDto);
+        ApiRestResponse response = profissionaisService.create(profissionalDto);
 
         // Assert
         verify(profissionaisValidator, times(1)).validate(profissionalDto);
@@ -167,12 +167,12 @@ class ProfissionaisServiceTest {
     void testUpdate() {
         // Arrange
         when(profissionaisValidator.validate(any(ProfissionaisDTO.class)))
-            .thenReturn(new ApiResponse(true, "Validado com sucesso"));
+            .thenReturn(new ApiRestResponse(true, "Validado com sucesso"));
         when(profissionaisRepository.findByIdAndActive(1L)).thenReturn(Optional.of(profissional));
         when(profissionaisRepository.save(any(Profissionais.class))).thenReturn(profissional);
 
         // Act
-        ApiResponse response = profissionaisService.update(profissionalDto);
+        ApiRestResponse response = profissionaisService.update(profissionalDto);
 
         // Assert
         verify(profissionaisValidator, times(1)).validate(profissionalDto);
@@ -185,10 +185,10 @@ class ProfissionaisServiceTest {
     void testUpdate_InvalidData() {
         // Arrange
         when(profissionaisValidator.validate(any(ProfissionaisDTO.class)))
-            .thenReturn(new ApiResponse(false, "Falha na validação"));
+            .thenReturn(new ApiRestResponse(false, "Falha na validação"));
 
         // Act
-        ApiResponse response = profissionaisService.update(profissionalDto);
+        ApiRestResponse response = profissionaisService.update(profissionalDto);
 
         // Assert
         verify(profissionaisValidator, times(1)).validate(profissionalDto);
@@ -201,7 +201,7 @@ class ProfissionaisServiceTest {
     void testUpdate_ResourceNotFoundException() {
         // Arrange
         when(profissionaisValidator.validate(any(ProfissionaisDTO.class)))
-            .thenReturn(new ApiResponse(true, "Validado com sucesso"));
+            .thenReturn(new ApiRestResponse(true, "Validado com sucesso"));
         when(profissionaisRepository.findByIdAndActive(1L)).thenReturn(Optional.empty());
 
         // Act & Assert
@@ -214,7 +214,7 @@ class ProfissionaisServiceTest {
         when(profissionaisRepository.findById(1L)).thenReturn(Optional.of(profissional));
 
         // Act
-        ApiResponse response = profissionaisService.delete(1L);
+        ApiRestResponse response = profissionaisService.delete(1L);
 
         // Assert
         assertNotNull(response);

@@ -6,7 +6,7 @@ import java.util.Set;
 import org.springframework.stereotype.Component;
 
 import br.com.maicon.data.dto.v1.ProfissionaisDTO;
-import br.com.maicon.utils.ApiResponse;
+import br.com.maicon.utils.ApiRestResponse;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 
@@ -49,10 +49,10 @@ public class ProfissionaisValidator {
      * @return ApiResponse com o resultado da validação do cargo.
      * @throws IllegalArgumentException se os dados do profissional forem inválidos.
      */
-    public ApiResponse validate(ProfissionaisDTO profissional) {
+    public ApiRestResponse validate(ProfissionaisDTO profissional) {
         String normalizedCargo = capitalizeCargo(profissional.getCargo());
         if (!validCargos.contains(normalizedCargo)) {
-            return new ApiResponse(false, "O cargo do profissional deve ser: Desenvolvedor, Designer, Suporte ou Tester.");
+            return new ApiRestResponse(false, "O cargo do profissional deve ser: Desenvolvedor, Designer, Suporte ou Tester.");
         }
         
         profissional.setCargo(normalizedCargo);
@@ -66,7 +66,7 @@ public class ProfissionaisValidator {
             throw new IllegalArgumentException(errorMessage.toString());
         }
 
-        return new ApiResponse(true, "Validação realizada com sucesso.");
+        return new ApiRestResponse(true, "Validação realizada com sucesso.");
     }
     
     /**

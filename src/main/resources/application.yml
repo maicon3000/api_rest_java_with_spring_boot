@@ -1,7 +1,6 @@
 spring:
-
   application:
-    name: api_rest_java_with_spring_boot  
+    name: api_rest_java_with_spring_boot
 
   datasource:
     url: jdbc:postgresql://localhost:5432/api_rest_java_with_spring_boot?currentSchema=public&stringtype=unspecified&options=-c%20timezone%3DAmerica/Sao_Paulo
@@ -19,3 +18,7 @@ spring:
 
   jackson:
       time-zone: America/Sao_Paulo
+springdoc:
+  pathsToMatch: /api/**/v1/**
+  swagger-ui:
+    use-root-path: true
