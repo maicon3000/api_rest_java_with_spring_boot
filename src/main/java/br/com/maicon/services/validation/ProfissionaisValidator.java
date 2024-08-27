@@ -6,7 +6,7 @@ import java.util.Set;
 import org.springframework.stereotype.Component;
 
 import br.com.maicon.data.dto.v1.ProfissionaisDTO;
-import br.com.maicon.util.ApiResponse;
+import br.com.maicon.utils.ApiResponse;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 

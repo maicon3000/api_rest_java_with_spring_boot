@@ -1,6 +1,8 @@
 package br.com.maicon.controllers;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,11 +14,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.maicon.data.dto.v1.ProfissionaisDTO;
+import br.com.maicon.data.dto.v1.utils.DtoUtils;
 import br.com.maicon.services.ProfissionaisService;
-import br.com.maicon.util.ApiResponse;
+import br.com.maicon.utils.ApiResponse;
 import jakarta.validation.Valid;
 
 /**
@@ -44,15 +48,35 @@ public class ProfissionaisController {
     }
 
     /**
-     * Retorna a lista de todos os profissionais cadastrados.
+     * Retorna a lista de todos os profissionais cadastrados, possivelmente filtrada por campos específicos.
      * 
-     * <p>Se não houver profissionais cadastrados, uma lista vazia será retornada.</p>
+     * <p>Se um parâmetro de pesquisa (q) for fornecido, os profissionais cujo nome ou cargo contenham o texto
+     * serão retornados. Se a lista de campos (fields) for fornecida, apenas os campos especificados serão incluídos
+     * na resposta. Se não houver profissionais cadastrados, uma lista vazia será retornada.</p>
      * 
-     * @return Lista de todos os profissionais cadastrados, não deletados.
+     * @param q Texto para filtrar profissionais pelo nome ou cargo (opcional).
+     * @param fields Lista de campos a serem retornados (opcional).
+     * @return Lista de profissionais cadastrados, possivelmente filtrada pelos campos especificados.
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<ProfissionaisDTO> findAll() {
-        return service.findAll();
+    public ResponseEntity<List<Map<String, Object>>> findAll(
+        @RequestParam(required = false) String q,
+        @RequestParam(required = false) List<String> fields) {
+
+        List<ProfissionaisDTO> profissionais = service.findAll(q);
+
+        // Se fields estiver presente, filtrar os campos
+        if (fields != null && !fields.isEmpty()) {
+            List<Map<String, Object>> filteredResponse = profissionais.stream()
+                .map(profissional -> DtoUtils.filterFields (profissional, fields))
+                .collect(Collectors.toList());
+            return ResponseEntity.ok(filteredResponse);
+        }
+
+        // Retornar todos os campos se fields não estiver presente
+        return ResponseEntity.ok(profissionais.stream()
+                .map(DtoUtils::convertToMap)
+                .collect(Collectors.toList()));
     }
 
     /**
@@ -74,7 +98,8 @@ public class ProfissionaisController {
      * Cria um novo profissional.
      * 
      * <p>Os dados do profissional são validados antes de serem persistidos. Se a validação falhar,
-     * uma exceção {@link org.springframework.web.bind.MethodArgumentNotValidException} será lançada.</p>
+     * uma exceção {@link org.springframework.web.bind.MethodArgumentNotValidException} será lançada.
+     * O campo `createdDate` é gerado automaticamente pelo sistema e não deve ser fornecido no corpo da requisição.</p>
      * 
      * @param profissional Dados do novo profissional a ser criado.
      * @return Resposta contendo o status da operação e uma mensagem de sucesso.
@@ -94,6 +119,7 @@ public class ProfissionaisController {
      * 
      * <p>Os dados do profissional são validados antes da atualização. Se a validação falhar,
      * uma exceção {@link org.springframework.web.bind.MethodArgumentNotValidException} será lançada.
+     * O campo `createdDate` do profissional não é alterado durante a atualização.
      * Se o ID fornecido não corresponder a um profissional existente, uma exceção 
      * {@link br.com.maicon.exception.ResourceNotFoundException} será lançada.</p>
      * 

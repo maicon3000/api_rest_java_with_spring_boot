@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import br.com.maicon.controllers.ProfissionaisController;
 import br.com.maicon.data.dto.v1.ProfissionaisDTO;
 import br.com.maicon.services.ProfissionaisService;
-import br.com.maicon.util.ApiResponse;
+import br.com.maicon.utils.ApiResponse;
 
 public class ProfissionaisControllerTest {
 

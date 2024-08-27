@@ -20,7 +20,7 @@ import br.com.maicon.model.Profissionais;
 import br.com.maicon.repositories.ProfissionaisRepository;
 import br.com.maicon.services.ProfissionaisService;
 import br.com.maicon.services.validation.ProfissionaisValidator;
-import br.com.maicon.util.ApiResponse;
+import br.com.maicon.utils.ApiResponse;
 
 class ProfissionaisServiceTest {
 

@@ -31,19 +31,13 @@ import br.com.maicon.model.Profissionais;
  * requisitos de consulta específicos da aplicação.</li>
  * </ul>
  * </p>
- *
- * <p>
- * <b>Exemplos de Uso:</b>
- * <pre>{@code
- * // Exemplo de injeção de dependência
- * @Autowired
- * private ProfissionaisRepository profissionaisRepository;
- *
- * // Exemplo de uso de métodos padrão
- * List<Profissionais> allProfessionals = profissionaisRepository.findAll();
- * Optional<Profissionais> professional = profissionaisRepository.findById(1L);
- * Profissionais savedProfessional = profissionaisRepository.save(new Profissionais(...));
- * }</pre>
+ * 
+ * <b>Métodos Personalizados:</b>
+ * <ul>
+ *   <li>{@link #findAllActive()}: Retorna uma lista de todos os profissionais ativos (não deletados).</li>
+ *   <li>{@link #findByIdAndActive(Long)}: Retorna um profissional específico pelo seu ID, desde que ele não esteja deletado.</li>
+ *   <li>{@link #findByQuery(String)}: Retorna uma lista de profissionais cujos nomes, cargos ou datas de nascimento correspondam ao termo de pesquisa fornecido, e que não estejam deletados.</li>
+ * </ul>
  * </p>
  *
  * @see JpaRepository
@@ -55,9 +49,44 @@ import br.com.maicon.model.Profissionais;
 @Repository
 public interface ProfissionaisRepository extends JpaRepository<Profissionais, Long> {
 	
-    @Query("SELECT p FROM Profissionais p WHERE p.deleted = false order by id")
+    /**
+     * Retorna uma lista de todos os profissionais que não foram deletados.
+     * 
+     * <p>Este método realiza uma consulta no banco de dados para buscar todos os registros 
+     * de profissionais cuja coluna {@code deleted} seja falsa. O resultado é ordenado pelo campo {@code id}.</p>
+     * 
+     * @return Uma lista de profissionais ativos (não deletados).
+     */
+    @Query("SELECT p FROM Profissionais p WHERE p.deleted = false ORDER BY id")
     List<Profissionais> findAllActive();
 
-    @Query("SELECT p FROM Profissionais p WHERE p.id = :id AND p.deleted = false order by id")
+    /**
+     * Retorna um profissional específico pelo seu ID, desde que ele não esteja deletado.
+     * 
+     * <p>Este método busca um profissional no banco de dados pelo seu ID, garantindo que o registro
+     * não esteja marcado como deletado. Se o profissional não for encontrado ou estiver deletado,
+     * o resultado será um {@link Optional} vazio.</p>
+     * 
+     * @param id O ID do profissional a ser buscado.
+     * @return Um {@link Optional} contendo o profissional encontrado, ou vazio se não encontrado.
+     */
+    @Query("SELECT p FROM Profissionais p WHERE p.id = :id AND p.deleted = false ORDER BY id")
     Optional<Profissionais> findByIdAndActive(@Param("id") Long id);
+
+    /**
+     * Realiza uma busca por profissionais com base em um termo de pesquisa.
+     * 
+     * <p>Este método procura profissionais cujos nomes, cargos ou datas de nascimento contenham
+     * o termo de pesquisa fornecido. A busca é insensível a maiúsculas/minúsculas e os resultados
+     * são filtrados para excluir registros deletados.</p>
+     * 
+     * @param q O termo de pesquisa a ser usado para a busca.
+     * @return Uma lista de profissionais que correspondam ao termo de pesquisa fornecido.
+     */
+	@Query("SELECT p FROM Profissionais p WHERE "
+     + "LOWER(p.nome) LIKE LOWER(CONCAT('%', :q, '%')) "
+     + "OR LOWER(p.cargo) LIKE LOWER(CONCAT('%', :q, '%'))"
+     + "OR TO_CHAR(p.nascimento, 'YYYY-MM-DD') LIKE CONCAT('%', :q, '%')"
+     + "AND p.deleted = false ORDER BY id")
+	List<Profissionais> findByQuery(@Param("q") String q);
 }

@@ -1,4 +1,4 @@
-package br.com.maicon.util;
+package br.com.maicon.utils;
 
 import lombok.Data;
 
