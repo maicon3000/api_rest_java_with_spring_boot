@@ -16,15 +16,24 @@ import br.com.maicon.models.Profissionais;
 import br.com.maicon.unittests.mapper.mocks.MockProfissionais;
 
 public class DozerMapperTest {
-    
-    MockProfissionais inputObject;
-    OffsetDateTime expectedOffsetDateTime;
-    Date expectedDate;
+
+    private MockProfissionais inputObject;
+    private OffsetDateTime expectedOffsetDateTime;
+    private Date expectedDate;
+
+    private static final String EXPECTED_NAME_PREFIX = "Nome Teste ";
+    private static final String EXPECTED_CARGO_PREFIX = "Cargo Teste ";
+    private static final Long ID_ZERO = 0L;
+    private static final Long ID_ONE = 1L;
+    private static final Long ID_FIVE = 5L;
+    private static final Long ID_TEN = 10L;
+    private static final boolean DELETED_FLAG = false;
+    private static final String DATE_STRING = "2000-01-01T00:00:00.000+00:00";
 
     @BeforeEach
     public void setUp() {
         inputObject = new MockProfissionais();
-        expectedOffsetDateTime = OffsetDateTime.parse("2000-01-01T00:00:00.000+00:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        expectedOffsetDateTime = OffsetDateTime.parse(DATE_STRING, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
         expectedDate = Date.from(expectedOffsetDateTime.toInstant());
     }
 
@@ -34,12 +43,12 @@ public class DozerMapperTest {
         ProfissionaisDTO output = DozerMapper.parseObject(inputObject.mockEntity(), ProfissionaisDTO.class);
 
         // Assert
-        assertEquals(Long.valueOf(0L), output.getId());
-        assertEquals("Nome Teste 0", output.getNome());
-        assertEquals("Cargo Teste 0", output.getCargo());
+        assertEquals(ID_ZERO, output.getId());
+        assertEquals(EXPECTED_NAME_PREFIX + "0", output.getNome());
+        assertEquals(EXPECTED_CARGO_PREFIX + "0", output.getCargo());
         assertEquals(expectedDate, output.getCreatedDate());
         assertEquals(expectedDate, output.getNascimento());
-        assertEquals(false, output.isDeleted());
+        assertEquals(DELETED_FLAG, output.isDeleted());
         assertEquals(expectedDate, output.getDeletedDate());
     }
 
@@ -54,28 +63,28 @@ public class DozerMapperTest {
         ProfissionaisDTO outputTen = outputList.get(10);
 
         // Assert
-        assertEquals(Long.valueOf(1L), outputOne.getId());
-        assertEquals("Nome Teste 1", outputOne.getNome());
-        assertEquals("Cargo Teste 1", outputOne.getCargo());
+        assertEquals(ID_ONE, outputOne.getId());
+        assertEquals(EXPECTED_NAME_PREFIX + "1", outputOne.getNome());
+        assertEquals(EXPECTED_CARGO_PREFIX + "1", outputOne.getCargo());
         assertEquals(expectedDate, outputOne.getCreatedDate());
         assertEquals(expectedDate, outputOne.getNascimento());
-        assertEquals(false, outputOne.isDeleted());
+        assertEquals(DELETED_FLAG, outputOne.isDeleted());
         assertEquals(expectedDate, outputOne.getDeletedDate());
 
-        assertEquals(Long.valueOf(5L), outputFive.getId());
-        assertEquals("Nome Teste 5", outputFive.getNome());
-        assertEquals("Cargo Teste 5", outputFive.getCargo());
+        assertEquals(ID_FIVE, outputFive.getId());
+        assertEquals(EXPECTED_NAME_PREFIX + "5", outputFive.getNome());
+        assertEquals(EXPECTED_CARGO_PREFIX + "5", outputFive.getCargo());
         assertEquals(expectedDate, outputFive.getCreatedDate());
         assertEquals(expectedDate, outputFive.getNascimento());
-        assertEquals(false, outputFive.isDeleted());
+        assertEquals(DELETED_FLAG, outputFive.isDeleted());
         assertEquals(expectedDate, outputFive.getDeletedDate());
 
-        assertEquals(Long.valueOf(10L), outputTen.getId());
-        assertEquals("Nome Teste 10", outputTen.getNome());
-        assertEquals("Cargo Teste 10", outputTen.getCargo());
+        assertEquals(ID_TEN, outputTen.getId());
+        assertEquals(EXPECTED_NAME_PREFIX + "10", outputTen.getNome());
+        assertEquals(EXPECTED_CARGO_PREFIX + "10", outputTen.getCargo());
         assertEquals(expectedDate, outputTen.getCreatedDate());
         assertEquals(expectedDate, outputTen.getNascimento());
-        assertEquals(false, outputTen.isDeleted());
+        assertEquals(DELETED_FLAG, outputTen.isDeleted());
         assertEquals(expectedDate, outputTen.getDeletedDate());
     }
 
@@ -85,12 +94,12 @@ public class DozerMapperTest {
         Profissionais output = DozerMapper.parseObject(inputObject.mockVO(), Profissionais.class);
 
         // Assert
-        assertEquals(Long.valueOf(0L), output.getId());
-        assertEquals("Nome Teste 0", output.getNome());
-        assertEquals("Cargo Teste 0", output.getCargo());
+        assertEquals(ID_ZERO, output.getId());
+        assertEquals(EXPECTED_NAME_PREFIX + "0", output.getNome());
+        assertEquals(EXPECTED_CARGO_PREFIX + "0", output.getCargo());
         assertEquals(expectedDate, output.getCreatedDate());
         assertEquals(expectedDate, output.getNascimento());
-        assertEquals(false, output.isDeleted());
+        assertEquals(DELETED_FLAG, output.isDeleted());
         assertEquals(expectedDate, output.getDeletedDate());
     }
 
@@ -105,28 +114,28 @@ public class DozerMapperTest {
         Profissionais outputTen = outputList.get(10);
 
         // Assert
-        assertEquals(Long.valueOf(1L), outputOne.getId());
-        assertEquals("Nome Teste 1", outputOne.getNome());
-        assertEquals("Cargo Teste 1", outputOne.getCargo());
+        assertEquals(ID_ONE, outputOne.getId());
+        assertEquals(EXPECTED_NAME_PREFIX + "1", outputOne.getNome());
+        assertEquals(EXPECTED_CARGO_PREFIX + "1", outputOne.getCargo());
         assertEquals(expectedDate, outputOne.getCreatedDate());
         assertEquals(expectedDate, outputOne.getNascimento());
-        assertEquals(false, outputOne.isDeleted());
+        assertEquals(DELETED_FLAG, outputOne.isDeleted());
         assertEquals(expectedDate, outputOne.getDeletedDate());
 
-        assertEquals(Long.valueOf(5L), outputFive.getId());
-        assertEquals("Nome Teste 5", outputFive.getNome());
-        assertEquals("Cargo Teste 5", outputFive.getCargo());
+        assertEquals(ID_FIVE, outputFive.getId());
+        assertEquals(EXPECTED_NAME_PREFIX + "5", outputFive.getNome());
+        assertEquals(EXPECTED_CARGO_PREFIX + "5", outputFive.getCargo());
         assertEquals(expectedDate, outputFive.getCreatedDate());
         assertEquals(expectedDate, outputFive.getNascimento());
-        assertEquals(false, outputFive.isDeleted());
+        assertEquals(DELETED_FLAG, outputFive.isDeleted());
         assertEquals(expectedDate, outputFive.getDeletedDate());
 
-        assertEquals(Long.valueOf(10L), outputTen.getId());
-        assertEquals("Nome Teste 10", outputTen.getNome());
-        assertEquals("Cargo Teste 10", outputTen.getCargo());
+        assertEquals(ID_TEN, outputTen.getId());
+        assertEquals(EXPECTED_NAME_PREFIX + "10", outputTen.getNome());
+        assertEquals(EXPECTED_CARGO_PREFIX + "10", outputTen.getCargo());
         assertEquals(expectedDate, outputTen.getCreatedDate());
         assertEquals(expectedDate, outputTen.getNascimento());
-        assertEquals(false, outputTen.isDeleted());
+        assertEquals(DELETED_FLAG, outputTen.isDeleted());
         assertEquals(expectedDate, outputTen.getDeletedDate());
     }
 

@@ -9,7 +9,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -22,88 +21,83 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import br.com.maicon.controllers.ProfissionaisController;
-import br.com.maicon.data.dto.v1.ProfissionaisDTO;
+import br.com.maicon.controllers.ContatosController;
+import br.com.maicon.data.dto.v1.ContatosDTO;
 import br.com.maicon.data.dto.v1.utils.DtoUtils;
-import br.com.maicon.services.ProfissionaisService;
+import br.com.maicon.services.ContatosService;
 import br.com.maicon.utils.ApiRestResponse;
 
-class ProfissionaisControllerTest {
+class ContatosControllerTest {
 
     private MockMvc mockMvc;
 
-    private static final String BASE_URL = "/api/profissionais/v1";
+    private static final String BASE_URL = "/api/contatos/v1";
     private static final String APPLICATION_JSON = MediaType.APPLICATION_JSON_VALUE;
-    private static final String SUCCESS_MESSAGE_CREATE = "Profissional cadastrado com sucesso!";
+    private static final String SUCCESS_MESSAGE_CREATE = "Contato cadastrado com sucesso!";
     private static final String SUCCESS_MESSAGE_UPDATE = "Cadastro atualizado com sucesso!";
-    private static final String SUCCESS_MESSAGE_DELETE = "Profissional excluído com sucesso!";
+    private static final String SUCCESS_MESSAGE_DELETE = "Contato excluído com sucesso!";
     private static final String ERROR_MESSAGE_INVALID_DATA = "Dados inválidos!";
-    private static final String ERROR_MESSAGE_INVALID_CARGO = "O cargo do profissional deve ser: Desenvolvedor, Designer, Suporte ou Tester.";
-    private static final String ERROR_MESSAGE_NOT_FOUND = "Profissional não encontrado!";
+    private static final String ERROR_MESSAGE_NOT_FOUND = "Contato não encontrado!";
     private static final String FIELD_ID = "$[0].id";
     private static final String FIELD_NAME = "$[0].nome";
     private static final String FIELD_SUCCESS = "$.success";
     private static final String FIELD_MESSAGE = "$.message";
     private static final Long MOCK_ID = 1L;
-    private static final String MOCK_NAME = "Nome Teste";
-    private static final String MOCK_CARGO = "Desenvolvedor";
-
-    private final String mockDateString = LocalDate.of(2000, 1, 1).toString();
 
     @Mock
-    private ProfissionaisService profissionaisService;
+    private ContatosService contatosService;
 
     @InjectMocks
-    private ProfissionaisController profissionaisController;
+    private ContatosController contatosController;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(profissionaisController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(contatosController).build();
     }
 
     @Test
     void testFindAll() throws Exception {
         // Arrange
-        ProfissionaisDTO profissionalDTO = new ProfissionaisDTO();
-        profissionalDTO.setId(MOCK_ID);
-        profissionalDTO.setNome(MOCK_NAME);
-        when(profissionaisService.findAll(null)).thenReturn(List.of(profissionalDTO));
+        ContatosDTO contatoDTO = new ContatosDTO();
+        contatoDTO.setId(MOCK_ID);
+        contatoDTO.setNome("Nome Teste");
+        when(contatosService.findAll(null)).thenReturn(List.of(contatoDTO));
 
         // Act & Assert
         mockMvc.perform(get(BASE_URL)
                 .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath(FIELD_ID).value(MOCK_ID))
-                .andExpect(jsonPath(FIELD_NAME).value(MOCK_NAME));
+                .andExpect(jsonPath(FIELD_NAME).value("Nome Teste"));
     }
 
     @Test
     void testFindAllWithQuery() throws Exception {
         // Arrange
-        ProfissionaisDTO profissionalDTO = new ProfissionaisDTO();
-        profissionalDTO.setId(MOCK_ID);
-        profissionalDTO.setNome(MOCK_NAME);
-        when(profissionaisService.findAll(MOCK_NAME)).thenReturn(List.of(profissionalDTO));
+        ContatosDTO contatoDTO = new ContatosDTO();
+        contatoDTO.setId(MOCK_ID);
+        contatoDTO.setNome("Nome Teste");
+        when(contatosService.findAll("Nome")).thenReturn(List.of(contatoDTO));
 
         // Act & Assert
         mockMvc.perform(get(BASE_URL)
-                .param("q", MOCK_NAME)
+                .param("q", "Nome")
                 .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath(FIELD_ID).value(MOCK_ID))
-                .andExpect(jsonPath(FIELD_NAME).value(MOCK_NAME));
+                .andExpect(jsonPath(FIELD_NAME).value("Nome Teste"));
     }
 
     @Test
     void testFindAllWithFields() throws Exception {
         // Arrange
-        ProfissionaisDTO profissionalDTO = new ProfissionaisDTO();
-        profissionalDTO.setId(MOCK_ID);
-        profissionalDTO.setNome(MOCK_NAME);
+        ContatosDTO contatoDTO = new ContatosDTO();
+        contatoDTO.setId(MOCK_ID);
+        contatoDTO.setNome("Nome Teste");
         List<String> fields = List.of("id", "nome");
-        Map<String, Object> filteredFields = DtoUtils.filterFields(profissionalDTO, fields);
-        when(profissionaisService.findAll(null)).thenReturn(List.of(profissionalDTO));
+        Map<String, Object> filteredFields = DtoUtils.filterFields(contatoDTO, fields);
+        when(contatosService.findAll(null)).thenReturn(List.of(contatoDTO));
 
         // Act & Assert
         mockMvc.perform(get(BASE_URL)
@@ -117,31 +111,31 @@ class ProfissionaisControllerTest {
     @Test
     void testFindById() throws Exception {
         // Arrange
-        ProfissionaisDTO profissionalDTO = new ProfissionaisDTO();
-        profissionalDTO.setId(MOCK_ID);
-        profissionalDTO.setNome(MOCK_NAME);
-        when(profissionaisService.findById(MOCK_ID)).thenReturn(profissionalDTO);
+        ContatosDTO contatoDTO = new ContatosDTO();
+        contatoDTO.setId(MOCK_ID);
+        contatoDTO.setNome("Nome Teste");
+        when(contatosService.findById(MOCK_ID)).thenReturn(contatoDTO);
 
         // Act & Assert
         mockMvc.perform(get(BASE_URL + "/1")
                 .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(MOCK_ID))
-                .andExpect(jsonPath("$.nome").value(MOCK_NAME));
+                .andExpect(jsonPath("$.nome").value("Nome Teste"));
     }
 
     @Test
     void testCreate() throws Exception {
         // Arrange
-        ProfissionaisDTO profissionalDTO = new ProfissionaisDTO();
-        profissionalDTO.setNome(MOCK_NAME);
+        ContatosDTO contatoDTO = new ContatosDTO();
+        contatoDTO.setNome("Nome Teste");
         ApiRestResponse apiResponse = new ApiRestResponse(true, SUCCESS_MESSAGE_CREATE);
-        when(profissionaisService.create(any(ProfissionaisDTO.class))).thenReturn(apiResponse);
+        when(contatosService.create(any(ContatosDTO.class))).thenReturn(apiResponse);
 
         // Act & Assert
         mockMvc.perform(post(BASE_URL)
                 .contentType(APPLICATION_JSON)
-                .content("{\"nome\":\"" + MOCK_NAME + "\",\"cargo\":\"" + MOCK_CARGO + "\",\"nascimento\":\"" + mockDateString + "\"}"))
+                .content("{\"nome\":\"Nome Teste\",\"contato\":\"Contato Teste\",\"profissionalId\":1}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath(FIELD_SUCCESS).value(true))
                 .andExpect(jsonPath(FIELD_MESSAGE).value(SUCCESS_MESSAGE_CREATE));
@@ -151,15 +145,15 @@ class ProfissionaisControllerTest {
     void testCreate_InvalidData() throws Exception {
         // Arrange
         ApiRestResponse apiResponse = new ApiRestResponse(false, ERROR_MESSAGE_INVALID_DATA);
-        when(profissionaisService.create(any(ProfissionaisDTO.class))).thenReturn(apiResponse);
+        when(contatosService.create(any(ContatosDTO.class))).thenReturn(apiResponse);
 
         // Act & Assert
         mockMvc.perform(post(BASE_URL)
                 .contentType(APPLICATION_JSON)
-                .content("{\"nome\":\"\",\"cargo\":\"" + MOCK_CARGO + "\",\"nascimento\":\"" + mockDateString + "\"}"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath(FIELD_SUCCESS).value(false))
-                .andExpect(jsonPath(FIELD_MESSAGE).value(ERROR_MESSAGE_INVALID_DATA));
+                .content("{\"nome\":\"\",\"contato\":\"Contato Teste\",\"profissionalId\":1}"))
+		        .andExpect(status().isBadRequest())
+		        .andExpect(jsonPath(FIELD_SUCCESS).value(false))
+		        .andExpect(jsonPath(FIELD_MESSAGE).value(ERROR_MESSAGE_INVALID_DATA));
     }
 
     @Test
@@ -167,12 +161,12 @@ class ProfissionaisControllerTest {
         // Arrange
         ApiRestResponse apiResponse = new ApiRestResponse(true, SUCCESS_MESSAGE_UPDATE);
 
-        when(profissionaisService.update(any(ProfissionaisDTO.class))).thenReturn(apiResponse);
+        when(contatosService.update(any(ContatosDTO.class))).thenReturn(apiResponse);
 
         // Act & Assert
         mockMvc.perform(put(BASE_URL + "/1")
                 .contentType(APPLICATION_JSON)
-                .content("{\"nome\":\"Nome Atualizado\",\"cargo\":\"Designer\",\"nascimento\":\"" + mockDateString + "\"}"))
+                .content("{\"nome\":\"Nome Atualizado\",\"contato\":\"Contato Atualizado\",\"profissionalId\":1}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath(FIELD_SUCCESS).value(true))
                 .andExpect(jsonPath(FIELD_MESSAGE).value(SUCCESS_MESSAGE_UPDATE));
@@ -181,24 +175,41 @@ class ProfissionaisControllerTest {
     @Test
     void testUpdate_InvalidData() throws Exception {
         // Arrange
-        ApiRestResponse apiResponse = new ApiRestResponse(false, ERROR_MESSAGE_INVALID_CARGO);
+        ApiRestResponse apiResponse = new ApiRestResponse(false, ERROR_MESSAGE_INVALID_DATA);
 
-        when(profissionaisService.update(any(ProfissionaisDTO.class))).thenReturn(apiResponse);
+        when(contatosService.update(any(ContatosDTO.class))).thenReturn(apiResponse);
+
+        // Act & Assert
+        String response = mockMvc.perform(put(BASE_URL + "/1")
+                .contentType(APPLICATION_JSON)
+                .content("{\"nome\":\"Nome Inválido\",\"contato\":\"\",\"profissionalId\":1}"))
+                .andExpect(status().isBadRequest())
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println(response);
+    }
+    
+    @Test
+    void testUpdate_Failure() throws Exception {
+        // Arrange
+        ApiRestResponse apiResponse = new ApiRestResponse(false, ERROR_MESSAGE_INVALID_DATA);
+
+        when(contatosService.update(any(ContatosDTO.class))).thenReturn(apiResponse);
 
         // Act & Assert
         mockMvc.perform(put(BASE_URL + "/1")
                 .contentType(APPLICATION_JSON)
-                .content("{\"nome\":\"Nome Inválido\",\"cargo\":\"Cargo Inválido\",\"nascimento\":\"" + mockDateString + "\"}"))
+                .content("{\"nome\":\"Nome Atualizado\",\"contato\":\"Contato Atualizado\",\"profissionalId\":1}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath(FIELD_SUCCESS).value(false))
-                .andExpect(jsonPath(FIELD_MESSAGE).value(ERROR_MESSAGE_INVALID_CARGO));
+                .andExpect(jsonPath(FIELD_MESSAGE).value(ERROR_MESSAGE_INVALID_DATA));
     }
 
     @Test
     void testDelete() throws Exception {
         // Arrange
         ApiRestResponse apiResponse = new ApiRestResponse(true, SUCCESS_MESSAGE_DELETE);
-        when(profissionaisService.delete(MOCK_ID)).thenReturn(apiResponse);
+        when(contatosService.delete(MOCK_ID)).thenReturn(apiResponse);
 
         // Act & Assert
         mockMvc.perform(delete(BASE_URL + "/1")
@@ -212,7 +223,7 @@ class ProfissionaisControllerTest {
     void testDelete_NotFound() throws Exception {
         // Arrange
         ApiRestResponse apiResponse = new ApiRestResponse(false, ERROR_MESSAGE_NOT_FOUND);
-        when(profissionaisService.delete(MOCK_ID)).thenReturn(apiResponse);
+        when(contatosService.delete(MOCK_ID)).thenReturn(apiResponse);
 
         // Act & Assert
         mockMvc.perform(delete(BASE_URL + "/1")

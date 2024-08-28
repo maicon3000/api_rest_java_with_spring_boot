@@ -203,13 +203,11 @@ public class ContatosService {
      * @throws ResourceNotFoundException se o contato não for encontrado.
      */
     public ApiRestResponse delete(Long id) {
-    	if (contatosRepository.existsById(id)) {
-	    	logger.info("Deleting contato with ID " + id);
-	    	contatosRepository.deleteById(id);
-	        return new ApiRestResponse(true, "Contato deletado com sucesso!");
-	    } else {
-	    	logger.info("Contato with ID " + id + " not found");
-	        return new ApiRestResponse(false, "Contato com ID " + id + " não encontrado.");
-	    }
+        if (!contatosRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Contato com ID " + id + " não encontrado.");
+        }
+        logger.info("Deleting contato with ID " + id);
+        contatosRepository.deleteById(id);
+        return new ApiRestResponse(true, "Contato deletado com sucesso!");
     }
 }

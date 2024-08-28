@@ -24,6 +24,15 @@ import br.com.maicon.utils.ApiRestResponse;
 
 class ProfissionaisServiceTest {
 
+    private static final Long MOCK_ID = 1L;
+    private static final String MOCK_NAME = "Nome Teste";
+    private static final String MOCK_POSITION = "Cargo Teste";
+    private static final String VALIDATION_SUCCESS = "Validado com sucesso";
+    private static final String VALIDATION_FAILURE = "Falha na validação";
+    private static final String CREATE_SUCCESS_MESSAGE = "Profissional com ID 1 cadastrado com sucesso!";
+    private static final String UPDATE_SUCCESS_MESSAGE = "Cadastro alterado com sucesso!";
+    private static final String DELETE_SUCCESS_MESSAGE = "Profissional excluído com sucesso!";
+
     @Mock
     private ProfissionaisRepository profissionaisRepository;
 
@@ -41,9 +50,9 @@ class ProfissionaisServiceTest {
         MockitoAnnotations.openMocks(this);
 
         profissionalDto = new ProfissionaisDTO();
-        profissionalDto.setId(1L);
-        profissionalDto.setNome("Nome Teste");
-        profissionalDto.setCargo("Cargo Teste");
+        profissionalDto.setId(MOCK_ID);
+        profissionalDto.setNome(MOCK_NAME);
+        profissionalDto.setCargo(MOCK_POSITION);
         profissionalDto.setNascimento(new Date());
         profissionalDto.setCreatedDate(new Date());
         profissionalDto.setDeleted(false);
@@ -69,10 +78,10 @@ class ProfissionaisServiceTest {
     @Test
     void testFindAllWithQuery() {
         // Arrange
-        when(profissionaisRepository.findByQuery("Nome")).thenReturn(List.of(profissional));
+        when(profissionaisRepository.findByQuery(MOCK_NAME)).thenReturn(List.of(profissional));
 
         // Act
-        List<ProfissionaisDTO> result = profissionaisService.findAll("Nome");
+        List<ProfissionaisDTO> result = profissionaisService.findAll(MOCK_NAME);
 
         // Assert
         assertNotNull(result);
@@ -111,10 +120,10 @@ class ProfissionaisServiceTest {
     @Test
     void testFindById() {
         // Arrange
-        when(profissionaisRepository.findByIdAndActive(1L)).thenReturn(Optional.of(profissional));
+        when(profissionaisRepository.findByIdAndActive(MOCK_ID)).thenReturn(Optional.of(profissional));
 
         // Act
-        ProfissionaisDTO result = profissionaisService.findById(1L);
+        ProfissionaisDTO result = profissionaisService.findById(MOCK_ID);
 
         // Assert
         assertNotNull(result);
@@ -124,17 +133,17 @@ class ProfissionaisServiceTest {
     @Test
     void testFindById_ResourceNotFoundException() {
         // Arrange
-        when(profissionaisRepository.findByIdAndActive(1L)).thenReturn(Optional.empty());
+        when(profissionaisRepository.findByIdAndActive(MOCK_ID)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(ResourceNotFoundException.class, () -> profissionaisService.findById(1L));
+        assertThrows(ResourceNotFoundException.class, () -> profissionaisService.findById(MOCK_ID));
     }
 
     @Test
     void testCreate() {
         // Arrange
         when(profissionaisValidator.validate(any(ProfissionaisDTO.class)))
-            .thenReturn(new ApiRestResponse(true, "Validado com sucesso"));
+            .thenReturn(new ApiRestResponse(true, VALIDATION_SUCCESS));
         when(profissionaisRepository.save(any(Profissionais.class))).thenReturn(profissional);
 
         // Act
@@ -144,14 +153,14 @@ class ProfissionaisServiceTest {
         verify(profissionaisValidator, times(1)).validate(profissionalDto);
         assertNotNull(response);
         assertTrue(response.isSuccess());
-        assertEquals("Profissional com ID 1 cadastrado com sucesso!", response.getMessage());
+        assertEquals(CREATE_SUCCESS_MESSAGE, response.getMessage());
     }
 
     @Test
     void testCreate_InvalidData() {
         // Arrange
         when(profissionaisValidator.validate(any(ProfissionaisDTO.class)))
-            .thenReturn(new ApiRestResponse(false, "Falha na validação"));
+            .thenReturn(new ApiRestResponse(false, VALIDATION_FAILURE));
 
         // Act
         ApiRestResponse response = profissionaisService.create(profissionalDto);
@@ -160,15 +169,15 @@ class ProfissionaisServiceTest {
         verify(profissionaisValidator, times(1)).validate(profissionalDto);
         assertNotNull(response);
         assertFalse(response.isSuccess());
-        assertEquals("Falha na validação", response.getMessage());
+        assertEquals(VALIDATION_FAILURE, response.getMessage());
     }
 
     @Test
     void testUpdate() {
         // Arrange
         when(profissionaisValidator.validate(any(ProfissionaisDTO.class)))
-            .thenReturn(new ApiRestResponse(true, "Validado com sucesso"));
-        when(profissionaisRepository.findByIdAndActive(1L)).thenReturn(Optional.of(profissional));
+            .thenReturn(new ApiRestResponse(true, VALIDATION_SUCCESS));
+        when(profissionaisRepository.findByIdAndActive(MOCK_ID)).thenReturn(Optional.of(profissional));
         when(profissionaisRepository.save(any(Profissionais.class))).thenReturn(profissional);
 
         // Act
@@ -178,14 +187,14 @@ class ProfissionaisServiceTest {
         verify(profissionaisValidator, times(1)).validate(profissionalDto);
         assertNotNull(response);
         assertTrue(response.isSuccess());
-        assertEquals("Cadastro alterado com sucesso!", response.getMessage());
+        assertEquals(UPDATE_SUCCESS_MESSAGE, response.getMessage());
     }
 
     @Test
     void testUpdate_InvalidData() {
         // Arrange
         when(profissionaisValidator.validate(any(ProfissionaisDTO.class)))
-            .thenReturn(new ApiRestResponse(false, "Falha na validação"));
+            .thenReturn(new ApiRestResponse(false, VALIDATION_FAILURE));
 
         // Act
         ApiRestResponse response = profissionaisService.update(profissionalDto);
@@ -194,15 +203,15 @@ class ProfissionaisServiceTest {
         verify(profissionaisValidator, times(1)).validate(profissionalDto);
         assertNotNull(response);
         assertFalse(response.isSuccess());
-        assertEquals("Falha na validação", response.getMessage());
+        assertEquals(VALIDATION_FAILURE, response.getMessage());
     }
 
     @Test
     void testUpdate_ResourceNotFoundException() {
         // Arrange
         when(profissionaisValidator.validate(any(ProfissionaisDTO.class)))
-            .thenReturn(new ApiRestResponse(true, "Validado com sucesso"));
-        when(profissionaisRepository.findByIdAndActive(1L)).thenReturn(Optional.empty());
+            .thenReturn(new ApiRestResponse(true, VALIDATION_SUCCESS));
+        when(profissionaisRepository.findByIdAndActive(MOCK_ID)).thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(ResourceNotFoundException.class, () -> profissionaisService.update(profissionalDto));
@@ -211,33 +220,33 @@ class ProfissionaisServiceTest {
     @Test
     void testDelete() {
         // Arrange
-        when(profissionaisRepository.findById(1L)).thenReturn(Optional.of(profissional));
+        when(profissionaisRepository.findById(MOCK_ID)).thenReturn(Optional.of(profissional));
 
         // Act
-        ApiRestResponse response = profissionaisService.delete(1L);
+        ApiRestResponse response = profissionaisService.delete(MOCK_ID);
 
         // Assert
         assertNotNull(response);
         assertTrue(response.isSuccess());
-        assertEquals("Profissional excluído com sucesso!", response.getMessage());
+        assertEquals(DELETE_SUCCESS_MESSAGE, response.getMessage());
     }
 
     @Test
     void testDelete_ResourceNotFoundException_NotFound() {
         // Arrange
-        when(profissionaisRepository.findById(1L)).thenReturn(Optional.empty());
+        when(profissionaisRepository.findById(MOCK_ID)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(ResourceNotFoundException.class, () -> profissionaisService.delete(1L));
+        assertThrows(ResourceNotFoundException.class, () -> profissionaisService.delete(MOCK_ID));
     }
 
     @Test
     void testDelete_ResourceNotFoundException_AlreadyDeleted() {
         // Arrange
         profissional.setDeleted(true);
-        when(profissionaisRepository.findById(1L)).thenReturn(Optional.of(profissional));
+        when(profissionaisRepository.findById(MOCK_ID)).thenReturn(Optional.of(profissional));
 
         // Act & Assert
-        assertThrows(ResourceNotFoundException.class, () -> profissionaisService.delete(1L));
+        assertThrows(ResourceNotFoundException.class, () -> profissionaisService.delete(MOCK_ID));
     }
 }
