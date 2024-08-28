@@ -125,4 +125,4 @@ Sinta-se à vontade para abrir issues ou enviar pull requests. Qualquer feedback
 ## Licença
 Este projeto é licenciado sob a MIT License.
 
-Feito com :heart: por [Maicon Moraes](https://github.com/maicon3000)
+Feito com :heart: por [Maicon Moraes](https://www.linkedin.com/in/maicon3000/)
