@@ -16,7 +16,9 @@ import org.mockito.MockitoAnnotations;
 import br.com.maicon.data.dto.v1.ProfissionaisDTO;
 import br.com.maicon.exception.ResourceNotFoundException;
 import br.com.maicon.mapper.DozerMapper;
+import br.com.maicon.models.Contatos;
 import br.com.maicon.models.Profissionais;
+import br.com.maicon.repositories.ContatosRepository;
 import br.com.maicon.repositories.ProfissionaisRepository;
 import br.com.maicon.services.ProfissionaisService;
 import br.com.maicon.services.validation.ProfissionaisValidator;
@@ -35,6 +37,9 @@ class ProfissionaisServiceTest {
 
     @Mock
     private ProfissionaisRepository profissionaisRepository;
+    
+    @Mock
+    private ContatosRepository contatosRepository;
 
     @Mock
     private ProfissionaisValidator profissionaisValidator;
@@ -42,29 +47,46 @@ class ProfissionaisServiceTest {
     @InjectMocks
     private ProfissionaisService profissionaisService;
 
-    private ProfissionaisDTO profissionalDto;
-    private Profissionais profissional;
+    private ProfissionaisDTO mockProfissionalDto;
+    private Profissionais mockProfissional;
+    private Contatos mockContato1;
+    private Contatos mockContato2;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        profissionalDto = new ProfissionaisDTO();
-        profissionalDto.setId(MOCK_ID);
-        profissionalDto.setNome(MOCK_NAME);
-        profissionalDto.setCargo(MOCK_POSITION);
-        profissionalDto.setNascimento(new Date());
-        profissionalDto.setCreatedDate(new Date());
-        profissionalDto.setDeleted(false);
-        profissionalDto.setDeletedDate(null);
+        mockProfissionalDto = new ProfissionaisDTO();
+        mockProfissionalDto.setId(MOCK_ID);
+        mockProfissionalDto.setNome(MOCK_NAME);
+        mockProfissionalDto.setCargo(MOCK_POSITION);
+        mockProfissionalDto.setNascimento(new Date());
+        mockProfissionalDto.setCreatedDate(new Date());
+        mockProfissionalDto.setDeleted(false);
+        mockProfissionalDto.setDeletedDate(null);
 
-        profissional = DozerMapper.parseObject(profissionalDto, Profissionais.class);
+        mockProfissional = DozerMapper.parseObject(mockProfissionalDto, Profissionais.class);
+        
+        mockProfissional = new Profissionais();
+        mockProfissional.setId(MOCK_ID);
+        mockProfissional.setNome(MOCK_NAME);
+        mockProfissional.setDeleted(false);
+
+        mockContato1 = new Contatos();
+        mockContato1.setId(1L);
+        mockContato1.setProfissionalId(MOCK_ID);
+        mockContato1.setDeletedProfissional(false);
+
+        mockContato2 = new Contatos();
+        mockContato2.setId(2L);
+        mockContato2.setProfissionalId(MOCK_ID);
+        mockContato2.setDeletedProfissional(false);
     }
 
     @Test
     void testFindAll() {
         // Arrange
-        when(profissionaisRepository.findAllActive()).thenReturn(List.of(profissional));
+        when(profissionaisRepository.findAllActive()).thenReturn(List.of(mockProfissional));
 
         // Act
         List<ProfissionaisDTO> result = profissionaisService.findAll();
@@ -72,13 +94,13 @@ class ProfissionaisServiceTest {
         // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(profissionalDto.getId(), result.get(0).getId());
+        assertEquals(mockProfissionalDto.getId(), result.get(0).getId());
     }
 
     @Test
     void testFindAllWithQuery() {
         // Arrange
-        when(profissionaisRepository.findByQuery(MOCK_NAME)).thenReturn(List.of(profissional));
+        when(profissionaisRepository.findByQuery(MOCK_NAME)).thenReturn(List.of(mockProfissional));
 
         // Act
         List<ProfissionaisDTO> result = profissionaisService.findAll(MOCK_NAME);
@@ -86,13 +108,13 @@ class ProfissionaisServiceTest {
         // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(profissionalDto.getId(), result.get(0).getId());
+        assertEquals(mockProfissionalDto.getId(), result.get(0).getId());
     }
     
     @Test
     void testFindAllWithEmptyQuery() {
         // Arrange
-        when(profissionaisRepository.findAllActive()).thenReturn(List.of(profissional));
+        when(profissionaisRepository.findAllActive()).thenReturn(List.of(mockProfissional));
 
         // Act
         List<ProfissionaisDTO> result = profissionaisService.findAll("");
@@ -100,13 +122,13 @@ class ProfissionaisServiceTest {
         // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(profissionalDto.getId(), result.get(0).getId());
+        assertEquals(mockProfissionalDto.getId(), result.get(0).getId());
     }
 
     @Test
     void testFindAllWithNullQuery() {
         // Arrange
-        when(profissionaisRepository.findAllActive()).thenReturn(List.of(profissional));
+        when(profissionaisRepository.findAllActive()).thenReturn(List.of(mockProfissional));
 
         // Act
         List<ProfissionaisDTO> result = profissionaisService.findAll(null);
@@ -114,20 +136,20 @@ class ProfissionaisServiceTest {
         // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(profissionalDto.getId(), result.get(0).getId());
+        assertEquals(mockProfissionalDto.getId(), result.get(0).getId());
     }
 
     @Test
     void testFindById() {
         // Arrange
-        when(profissionaisRepository.findByIdAndActive(MOCK_ID)).thenReturn(Optional.of(profissional));
+        when(profissionaisRepository.findByIdAndActive(MOCK_ID)).thenReturn(Optional.of(mockProfissional));
 
         // Act
         ProfissionaisDTO result = profissionaisService.findById(MOCK_ID);
 
         // Assert
         assertNotNull(result);
-        assertEquals(profissionalDto.getId(), result.getId());
+        assertEquals(mockProfissionalDto.getId(), result.getId());
     }
 
     @Test
@@ -144,13 +166,13 @@ class ProfissionaisServiceTest {
         // Arrange
         when(profissionaisValidator.validate(any(ProfissionaisDTO.class)))
             .thenReturn(new ApiRestResponse(true, VALIDATION_SUCCESS));
-        when(profissionaisRepository.save(any(Profissionais.class))).thenReturn(profissional);
+        when(profissionaisRepository.save(any(Profissionais.class))).thenReturn(mockProfissional);
 
         // Act
-        ApiRestResponse response = profissionaisService.create(profissionalDto);
+        ApiRestResponse response = profissionaisService.create(mockProfissionalDto);
 
         // Assert
-        verify(profissionaisValidator, times(1)).validate(profissionalDto);
+        verify(profissionaisValidator, times(1)).validate(mockProfissionalDto);
         assertNotNull(response);
         assertTrue(response.isSuccess());
         assertEquals(CREATE_SUCCESS_MESSAGE, response.getMessage());
@@ -163,10 +185,10 @@ class ProfissionaisServiceTest {
             .thenReturn(new ApiRestResponse(false, VALIDATION_FAILURE));
 
         // Act
-        ApiRestResponse response = profissionaisService.create(profissionalDto);
+        ApiRestResponse response = profissionaisService.create(mockProfissionalDto);
 
         // Assert
-        verify(profissionaisValidator, times(1)).validate(profissionalDto);
+        verify(profissionaisValidator, times(1)).validate(mockProfissionalDto);
         assertNotNull(response);
         assertFalse(response.isSuccess());
         assertEquals(VALIDATION_FAILURE, response.getMessage());
@@ -177,14 +199,14 @@ class ProfissionaisServiceTest {
         // Arrange
         when(profissionaisValidator.validate(any(ProfissionaisDTO.class)))
             .thenReturn(new ApiRestResponse(true, VALIDATION_SUCCESS));
-        when(profissionaisRepository.findByIdAndActive(MOCK_ID)).thenReturn(Optional.of(profissional));
-        when(profissionaisRepository.save(any(Profissionais.class))).thenReturn(profissional);
+        when(profissionaisRepository.findByIdAndActive(MOCK_ID)).thenReturn(Optional.of(mockProfissional));
+        when(profissionaisRepository.save(any(Profissionais.class))).thenReturn(mockProfissional);
 
         // Act
-        ApiRestResponse response = profissionaisService.update(profissionalDto);
+        ApiRestResponse response = profissionaisService.update(mockProfissionalDto);
 
         // Assert
-        verify(profissionaisValidator, times(1)).validate(profissionalDto);
+        verify(profissionaisValidator, times(1)).validate(mockProfissionalDto);
         assertNotNull(response);
         assertTrue(response.isSuccess());
         assertEquals(UPDATE_SUCCESS_MESSAGE, response.getMessage());
@@ -197,10 +219,10 @@ class ProfissionaisServiceTest {
             .thenReturn(new ApiRestResponse(false, VALIDATION_FAILURE));
 
         // Act
-        ApiRestResponse response = profissionaisService.update(profissionalDto);
+        ApiRestResponse response = profissionaisService.update(mockProfissionalDto);
 
         // Assert
-        verify(profissionaisValidator, times(1)).validate(profissionalDto);
+        verify(profissionaisValidator, times(1)).validate(mockProfissionalDto);
         assertNotNull(response);
         assertFalse(response.isSuccess());
         assertEquals(VALIDATION_FAILURE, response.getMessage());
@@ -214,13 +236,16 @@ class ProfissionaisServiceTest {
         when(profissionaisRepository.findByIdAndActive(MOCK_ID)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(ResourceNotFoundException.class, () -> profissionaisService.update(profissionalDto));
+        assertThrows(ResourceNotFoundException.class, () -> profissionaisService.update(mockProfissionalDto));
     }
 
     @Test
     void testDelete() {
         // Arrange
-        when(profissionaisRepository.findById(MOCK_ID)).thenReturn(Optional.of(profissional));
+        List<Contatos> mockContatosList = List.of(mockContato1, mockContato2);
+
+        when(profissionaisRepository.findByIdAndActive(MOCK_ID)).thenReturn(Optional.of(mockProfissional));
+        when(contatosRepository.findAll()).thenReturn(mockContatosList);
 
         // Act
         ApiRestResponse response = profissionaisService.delete(MOCK_ID);
@@ -229,6 +254,16 @@ class ProfissionaisServiceTest {
         assertNotNull(response);
         assertTrue(response.isSuccess());
         assertEquals(DELETE_SUCCESS_MESSAGE, response.getMessage());
+
+        assertTrue(mockProfissional.isDeleted());
+        assertNotNull(mockProfissional.getDeletedDate());
+
+        for (Contatos contato : mockContatosList) {
+            assertTrue(contato.getDeletedProfissional());
+        }
+
+        verify(profissionaisRepository, times(1)).save(mockProfissional);
+        verify(contatosRepository, times(mockContatosList.size())).save(any(Contatos.class));
     }
 
     @Test
@@ -243,8 +278,8 @@ class ProfissionaisServiceTest {
     @Test
     void testDelete_ResourceNotFoundException_AlreadyDeleted() {
         // Arrange
-        profissional.setDeleted(true);
-        when(profissionaisRepository.findById(MOCK_ID)).thenReturn(Optional.of(profissional));
+        mockProfissional.setDeleted(true);
+        when(profissionaisRepository.findById(MOCK_ID)).thenReturn(Optional.of(mockProfissional));
 
         // Act & Assert
         assertThrows(ResourceNotFoundException.class, () -> profissionaisService.delete(MOCK_ID));

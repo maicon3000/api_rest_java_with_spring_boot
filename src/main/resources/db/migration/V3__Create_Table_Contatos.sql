@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS public.contatos
     contato varchar(100) COLLATE pg_catalog."default" NOT NULL,
     created_date date DEFAULT CURRENT_DATE,
     profissional_id integer NOT NULL,
+    deleted_profissional boolean,
     CONSTRAINT contatos_pkey PRIMARY KEY (id)
 );
 

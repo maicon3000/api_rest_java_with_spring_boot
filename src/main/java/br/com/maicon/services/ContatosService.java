@@ -129,6 +129,8 @@ public class ContatosService {
      * <p>O campo {@code createdDate} é automaticamente preenchido com a data e hora atuais
      * no fuso horário de São Paulo (GMT-3).</p>
      * 
+     * <p>O campo {@code deletedProfissional} é automaticamente preenchido com false.</p>
+     * 
      * <p>Este método utiliza o {@link DozerMapper} para converter o {@link ContatosDTO} 
      * em uma entidade {@link Contatos} antes de persistir no banco de dados.</p>
      * 
@@ -147,7 +149,8 @@ public class ContatosService {
                 .orElseThrow(() -> new ResourceNotFoundException("Profissional não encontrado para adição de contato"));
         
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo"));
-        contato.setCreatedDate(Date.from(now.toInstant()));        
+        contato.setCreatedDate(Date.from(now.toInstant()));  
+        contato.setDeletedProfissional(false);
         var converterContato = DozerMapper.parseObject(contato, Contatos.class);
         contatosRepository.save(converterContato);
 
@@ -180,7 +183,7 @@ public class ContatosService {
             return validationResponse;
         }
         
-        var existingContact = contatosRepository.findById(contato.getId())
+        var existingContact = contatosRepository.findByIdAndActive(contato.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Contato não encontrado para atualização"));
         
         contato.setCreatedDate(existingContact.getCreatedDate());
@@ -196,16 +199,18 @@ public class ContatosService {
     /**
      * Deleta um contato pelo seu ID.
      * 
-     * <p>Se o ID não corresponder a nenhum contato existente, uma exceção {@link ResourceNotFoundException} será lançada.</p>
+     * <p>Este método verifica se o contato existe e não está marcado como deletado utilizando o método 
+     * {@link contatosRepository#findByIdAndActive(Long)}. Se o contato não for encontrado ou já estiver deletado, 
+     * uma exceção {@link ResourceNotFoundException} será lançada. No entanto, ele realiza a deleção física do banco.</p>
      * 
      * @param id ID do contato a ser deletado.
      * @return Resposta contendo o sucesso da operação de deleção.
-     * @throws ResourceNotFoundException se o contato não for encontrado.
+     * @throws ResourceNotFoundException se o contato não for encontrado ou já estiver marcado como deletado.
      */
     public ApiRestResponse delete(Long id) {
-        if (!contatosRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Contato com ID " + id + " não encontrado.");
-        }
+        contatosRepository.findByIdAndActive(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Contato com ID " + id + " não encontrado."));
+        
         logger.info("Deleting contato with ID " + id);
         contatosRepository.deleteById(id);
         return new ApiRestResponse(true, "Contato deletado com sucesso!");

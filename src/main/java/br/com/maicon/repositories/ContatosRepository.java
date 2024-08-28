@@ -1,6 +1,7 @@
 package br.com.maicon.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -47,6 +48,32 @@ import br.com.maicon.models.Contatos;
 public interface ContatosRepository extends JpaRepository<Contatos, Long> {
 
     /**
+     * Retorna uma lista de todos os contatos que não foram deletados logicamente.
+     * 
+     * <p>Este método realiza uma consulta no banco de dados para buscar todos os registros 
+     * de contatos onde a coluna {@code deletedProfissional} seja falsa. O resultado da consulta
+     * é ordenado pelo campo {@code id} em ordem crescente.</p>
+     * 
+     * @return Uma lista de contatos ativos (não deletados logicamente).
+     */
+    @Query("SELECT c FROM Contatos c WHERE c.deletedProfissional <> true ORDER BY id")
+    List<Contatos> findAllActive();
+
+    /**
+     * Retorna um contato específico pelo seu ID, desde que não esteja deletado logicamente.
+     * 
+     * <p>Este método realiza uma consulta no banco de dados para buscar um contato pelo seu ID,
+     * garantindo que o registro não esteja marcado como deletado logicamente 
+     * (ou seja, onde {@code deletedProfissional} seja falso). Se o contato não for encontrado ou estiver deletado,
+     * o método retorna um {@link Optional} vazio.</p>
+     * 
+     * @param id O ID do contato a ser buscado.
+     * @return Um {@link Optional} contendo o contato encontrado, ou vazio se não encontrado.
+     */
+    @Query("SELECT c FROM Contatos c WHERE c.id = :id AND c.deletedProfissional <> true")
+    Optional<Contatos> findByIdAndActive(@Param("id") Long id);
+    
+    /**
      * Realiza uma busca por contatos com base em um termo de pesquisa.
      * 
      * <p>Este método procura contatos cujos nomes, informações de contato ou IDs de profissionais contenham
@@ -60,6 +87,6 @@ public interface ContatosRepository extends JpaRepository<Contatos, Long> {
 		     + "LOWER(c.nome) LIKE LOWER(CONCAT('%', :q, '%')) "
 		     + "OR LOWER(c.contato) LIKE LOWER(CONCAT('%', :q, '%')) "
 		     + "OR STR(c.profissionalId) LIKE CONCAT('%', :q, '%') "
-		     + "ORDER BY c.id")
+		     + "AND c.deletedProfissional <> true ORDER BY c.id")
 	List<Contatos> findByQuery(@Param("q") String q);
 }

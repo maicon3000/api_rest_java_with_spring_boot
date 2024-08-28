@@ -89,6 +89,12 @@ public class ContatosDTO implements Serializable {
      */
     @NotNull
     private Long profissionalId;
+    
+    /**
+     * Identificador de deleção do profissional, ignorado durante a serialização JSON.
+     */
+    @JsonIgnore
+    private Boolean deletedProfissional;
 
     /**
      * Método para definir a data de criação, ignorado durante a serialização JSON.

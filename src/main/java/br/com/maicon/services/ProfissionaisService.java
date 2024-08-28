@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 import br.com.maicon.data.dto.v1.ProfissionaisDTO;
 import br.com.maicon.exception.ResourceNotFoundException;
 import br.com.maicon.mapper.DozerMapper;
+import br.com.maicon.models.Contatos;
 import br.com.maicon.models.Profissionais;
+import br.com.maicon.repositories.ContatosRepository;
 import br.com.maicon.repositories.ProfissionaisRepository;
 import br.com.maicon.services.validation.ProfissionaisValidator;
 import br.com.maicon.utils.ApiRestResponse;
@@ -50,6 +52,7 @@ public class ProfissionaisService {
 
     @Autowired
     private ProfissionaisRepository profissionaisRepository;
+    private ContatosRepository contatosRepository;
     private final ProfissionaisValidator profissionaisValidator;
     private final Logger logger = Logger.getLogger(ProfissionaisService.class.getName());
 
@@ -61,8 +64,9 @@ public class ProfissionaisService {
      * @param profissionaisRepository Repositório para acesso aos dados da entidade {@link Profissionais}.
      * @param profissionaisValidator Validador responsável por garantir a conformidade dos dados dos profissionais.
      */
-    public ProfissionaisService(ProfissionaisRepository profissionaisRepository, ProfissionaisValidator profissionaisValidator) {
+    public ProfissionaisService(ProfissionaisRepository profissionaisRepository, ContatosRepository contatosRepository, ProfissionaisValidator profissionaisValidator) {
         this.profissionaisRepository = profissionaisRepository;
+        this.contatosRepository = contatosRepository;
         this.profissionaisValidator = profissionaisValidator;
     }
 
@@ -186,9 +190,14 @@ public class ProfissionaisService {
     }
     
     /**
-     * Marca um profissional como deletado pelo seu ID.
+     * Marca um profissional como deletado pelo seu ID e atualiza todos os contatos associados como deletados.
      * 
-     * <p>Se o ID não corresponder a nenhum profissional existente, ou se o profissional já estiver marcado como deletado, uma exceção {@link ResourceNotFoundException} será lançada.</p>
+     * <p>Este método realiza a deleção lógica de um profissional, marcando o campo {@code deleted} como verdadeiro e 
+     * atribuindo a data atual ao campo {@code deletedDate}. Além disso, todos os contatos associados ao profissional 
+     * terão o campo {@code deletedProfissional} marcado como verdadeiro.</p>
+     * 
+     * <p>Se o ID fornecido não corresponder a nenhum profissional existente, uma exceção {@link ResourceNotFoundException} 
+     * será lançada. O mesmo ocorrerá se o profissional já estiver marcado como deletado.</p>
      * 
      * @param id ID do profissional a ser marcado como deletado.
      * @return Resposta contendo o sucesso da operação de deleção.
@@ -197,16 +206,20 @@ public class ProfissionaisService {
     public ApiRestResponse delete(Long id) {
         String errorMessage = "Profissional não encontrado com o ID " + id;
 
-        Profissionais profissional = profissionaisRepository.findById(id)
+        Profissionais profissional = profissionaisRepository.findByIdAndActive(id)
             .orElseThrow(() -> new ResourceNotFoundException(errorMessage));
-        
-        if (profissional.isDeleted()) {
-            throw new ResourceNotFoundException(errorMessage);
-        }
 
         profissional.setDeleted(true);
         profissional.setDeletedDate(new Date());
-
+        
+        List<Contatos> contatosList = contatosRepository.findAll();
+        
+        for (Contatos contato : contatosList) {
+            if (contato.getProfissionalId().equals(id)) {
+                contato.setDeletedProfissional(true);
+                contatosRepository.save(contato);
+            }
+        }
         profissionaisRepository.save(profissional);
         logger.info("Logically deleting professional with ID " + id + ": " + profissional.getNome());
         return new ApiRestResponse(true, "Profissional excluído com sucesso!");

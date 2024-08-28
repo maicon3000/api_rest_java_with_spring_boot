@@ -57,7 +57,7 @@ public interface ProfissionaisRepository extends JpaRepository<Profissionais, Lo
      * 
      * @return Uma lista de profissionais ativos (não deletados).
      */
-    @Query("SELECT p FROM Profissionais p WHERE p.deleted = false ORDER BY id")
+    @Query("SELECT p FROM Profissionais p WHERE p.deleted <> true ORDER BY id")
     List<Profissionais> findAllActive();
 
     /**
@@ -70,7 +70,7 @@ public interface ProfissionaisRepository extends JpaRepository<Profissionais, Lo
      * @param id O ID do profissional a ser buscado.
      * @return Um {@link Optional} contendo o profissional encontrado, ou vazio se não encontrado.
      */
-    @Query("SELECT p FROM Profissionais p WHERE p.id = :id AND p.deleted = false")
+    @Query("SELECT p FROM Profissionais p WHERE p.id = :id AND p.deleted <> true")
     Optional<Profissionais> findByIdAndActive(@Param("id") Long id);
 
     /**
@@ -87,6 +87,6 @@ public interface ProfissionaisRepository extends JpaRepository<Profissionais, Lo
 		     + "LOWER(p.nome) LIKE LOWER(CONCAT('%', :q, '%')) "
 		     + "OR LOWER(p.cargo) LIKE LOWER(CONCAT('%', :q, '%'))"
 		     + "OR TO_CHAR(p.nascimento, 'YYYY-MM-DD') LIKE CONCAT('%', :q, '%')"
-		     + "AND p.deleted = false ORDER BY p.id")
+		     + "AND p.deleted <> true ORDER BY p.id")
 	List<Profissionais> findByQuery(@Param("q") String q);
 }

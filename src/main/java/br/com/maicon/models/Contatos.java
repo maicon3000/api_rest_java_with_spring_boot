@@ -78,4 +78,10 @@ public class Contatos implements Serializable {
      */
     @Column(name = "profissional_id", nullable = false)
     private Long profissionalId;
+    
+    /**
+     * Identificador de deleção do profissional.
+     */
+    @Column(name = "deleted_profissional")
+    private Boolean deletedProfissional;
 }
