@@ -1,4 +1,4 @@
-# API RESTful Java com Spring Boot
+# API REST Java com Spring Boot
 
 ## Visão Geral
 
