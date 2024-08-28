@@ -54,7 +54,6 @@ public class ExceptionResponse implements Serializable {
      * Construtor que inicializa todos os campos da resposta de exceção.
      * 
      * @param timestamp Data e hora da exceção
-     * @param success Informação de sucesso.
      * @param message Mensagem de erro associada à exceção
      * @param details Detalhes adicionais sobre a exceção
      */

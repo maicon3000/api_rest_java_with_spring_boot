@@ -13,11 +13,13 @@ import br.com.maicon.data.dto.v1.ContatosDTO;
 import br.com.maicon.exception.ResourceNotFoundException;
 import br.com.maicon.mapper.DozerMapper;
 import br.com.maicon.models.Contatos;
+import br.com.maicon.models.Profissionais;
 import br.com.maicon.repositories.ContatosRepository;
 import br.com.maicon.repositories.ProfissionaisRepository;
 import br.com.maicon.services.validation.base.ValidatorBase;
 import br.com.maicon.utils.ApiRestResponse;
 import jakarta.validation.Validator;
+
 
 /**
  * Serviço responsável pelo gerenciamento de operações relacionadas à entidade {@link Contatos}.
@@ -200,7 +202,7 @@ public class ContatosService {
      * Deleta um contato pelo seu ID.
      * 
      * <p>Este método verifica se o contato existe e não está marcado como deletado utilizando o método 
-     * {@link contatosRepository#findByIdAndActive(Long)}. Se o contato não for encontrado ou já estiver deletado, 
+     * {@link br.com.maicon.repositories.ContatosRepository#findByIdAndActive(Long)}. Se o contato não for encontrado ou já estiver deletado, 
      * uma exceção {@link ResourceNotFoundException} será lançada. No entanto, ele realiza a deleção física do banco.</p>
      * 
      * @param id ID do contato a ser deletado.

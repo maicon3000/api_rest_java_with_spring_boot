@@ -36,6 +36,8 @@ import com.github.dozermapper.core.Mapper;
  * @version 1.0
  */
 public class DozerMapper {
+	
+	public DozerMapper() {}
     
     private static Mapper mapper = DozerBeanMapperBuilder.buildDefault();
     

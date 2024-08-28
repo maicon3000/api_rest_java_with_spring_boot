@@ -30,7 +30,6 @@ import br.com.maicon.models.Profissionais;
  * <li>Métodos personalizados podem ser adicionados conforme necessário para suportar
  * requisitos de consulta específicos da aplicação.</li>
  * </ul>
- * </p>
  * 
  * <b>Métodos Personalizados:</b>
  * <ul>
@@ -38,7 +37,6 @@ import br.com.maicon.models.Profissionais;
  *   <li>{@link #findByIdAndActive(Long)}: Retorna um profissional específico pelo seu ID, desde que ele não esteja deletado.</li>
  *   <li>{@link #findByQuery(String)}: Retorna uma lista de profissionais cujos nomes, cargos ou datas de nascimento correspondam ao termo de pesquisa fornecido, e que não estejam deletados.</li>
  * </ul>
- * </p>
  *
  * @see JpaRepository
  * @see Profissionais

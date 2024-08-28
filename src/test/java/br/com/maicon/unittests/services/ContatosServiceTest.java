@@ -210,7 +210,9 @@ class ContatosServiceTest {
         // Arrange
         when(validator.validateBase(any(ContatosDTO.class)))
             .thenReturn(new ApiRestResponse(true, VALIDATION_SUCCESS));
-        when(contatosRepository.findById(MOCK_ID)).thenReturn(Optional.of(contato));
+        
+        when(contatosRepository.findByIdAndActive(MOCK_ID)).thenReturn(Optional.of(contato));
+        
         when(contatosRepository.save(any(Contatos.class))).thenReturn(contato);
 
         // Act
@@ -218,10 +220,14 @@ class ContatosServiceTest {
 
         // Assert
         verify(validator, times(1)).validateBase(contatoDto);
+        verify(contatosRepository, times(1)).findByIdAndActive(MOCK_ID);
+        verify(contatosRepository, times(1)).save(any(Contatos.class));
+
         assertNotNull(response);
         assertTrue(response.isSuccess());
         assertEquals(UPDATE_SUCCESS_MESSAGE, response.getMessage());
     }
+
 
     @Test
     void testUpdate_InvalidData() {
@@ -253,7 +259,10 @@ class ContatosServiceTest {
     @Test
     void testDelete() {
         // Arrange
-        when(contatosRepository.existsById(MOCK_ID)).thenReturn(true);
+        Contatos mockContato = new Contatos();
+        mockContato.setId(MOCK_ID);
+
+        when(contatosRepository.findByIdAndActive(MOCK_ID)).thenReturn(Optional.of(mockContato));
 
         // Act
         ApiRestResponse response = contatosService.delete(MOCK_ID);
@@ -262,6 +271,8 @@ class ContatosServiceTest {
         assertNotNull(response);
         assertTrue(response.isSuccess());
         assertEquals(DELETE_SUCCESS_MESSAGE, response.getMessage());
+
+        verify(contatosRepository, times(1)).deleteById(MOCK_ID);
     }
 
     @Test

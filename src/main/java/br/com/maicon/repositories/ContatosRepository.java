@@ -30,13 +30,11 @@ import br.com.maicon.models.Contatos;
  * <li>Métodos personalizados podem ser adicionados conforme necessário para suportar
  * requisitos de consulta específicos da aplicação.</li>
  * </ul>
- * </p>
  * 
  * <b>Métodos Personalizados:</b>
  * <ul>
  *   <li>{@link #findByQuery(String)}: Retorna uma lista de contatos cujos nomes, informações de contato ou IDs de profissionais correspondam ao termo de pesquisa fornecido.</li>
  * </ul>
- * </p>
  *
  * @see JpaRepository
  * @see Contatos
