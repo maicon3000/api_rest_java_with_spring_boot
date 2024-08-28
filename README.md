@@ -28,7 +28,6 @@ Este projeto é uma API RESTful desenvolvida em Java utilizando o framework Spri
 ### 4. **PostgreSQL & PgAdmin 4**
    - **Descrição**: PostgreSQL é um sistema gerenciador de banco de dados objeto-relacional de código aberto. PgAdmin 4 é uma ferramenta de gerenciamento e administração para PostgreSQL.
    - **Funcionalidade**: Banco de dados utilizado para armazenar todas as informações da aplicação. PgAdmin 4 é utilizado para gerenciar e visualizar o banco de dados.
-   - ![image](https://github.com/user-attachments/assets/c908525b-f0c6-45c8-b144-a33fc5476a33)
 
 
 ### 5. **Postman**
@@ -41,9 +40,13 @@ Este projeto é uma API RESTful desenvolvida em Java utilizando o framework Spri
    - **Descrição**: SpringDoc é uma biblioteca que gera automaticamente a documentação OpenAPI (Swagger) para APIs RESTful baseadas em Spring.
    - **Funcionalidade**: Gera uma interface gráfica onde é possível visualizar e interagir com os endpoints da API.
 
+https://github.com/user-attachments/assets/f0a593b7-971c-4f6b-87bf-b8cb0d6946ed
+
 ### 7. **FlywayDB**
    - **Descrição**: Flyway é uma ferramenta de migração de banco de dados baseada em SQL.
    - **Funcionalidade**: Utilizado para gerenciar e versionar as alterações no esquema do banco de dados, garantindo que todas as instâncias da aplicação tenham a mesma estrutura de banco de dados.
+
+https://github.com/user-attachments/assets/b697f533-d7b0-4b7e-9f18-9d21e6930349
 
 ### 8. **Lombok**
    - **Descrição**: Lombok é uma biblioteca Java que reduz o código boilerplate, como getters, setters, e construtores, através de anotações.
@@ -60,13 +63,14 @@ Este projeto é uma API RESTful desenvolvida em Java utilizando o framework Spri
 ### 11. **JavaDoc**
    - **Descrição**: JavaDoc é uma ferramenta para geração automática de documentação de código Java.
    - **Funcionalidade**: Documenta a API, facilitando a compreensão do código por outros desenvolvedores e melhorando a manutenção do projeto.
-   - ![image](https://github.com/user-attachments/assets/7f21cbea-cdfe-429e-bb78-9e276e24be38)
 
+https://github.com/user-attachments/assets/885616cb-6ed0-4d78-ae69-97c262ce2d58
 
-## 12. JaCoCo Maven Plugin
+### 12. JaCoCo Maven Plugin
    - **Descrição**: JaCoCo (Java Code Coverage) é uma biblioteca de código aberto usada para medir a cobertura de código Java durante a execução de testes.
    - **Funcionalidade**: O plugin JaCoCo Maven é integrado ao ciclo de vida do Maven para gerar relatórios detalhados de cobertura de código, permitindo que os desenvolvedores identifiquem partes do código que não foram cobertas pelos testes. Isso ajuda a garantir que o código tenha uma cobertura adequada de testes, aumentando a confiabilidade e a qualidade do software.
-   - ![image](https://github.com/user-attachments/assets/e356e58c-91c0-4e8c-92a7-da4a3e2a6edc)
+
+https://github.com/user-attachments/assets/fb254bf8-77ba-4cf9-b01d-3467457e9f54
 
 ### 13. **Clean Code & Design Patterns**
    - **Descrição**: Clean Code é uma filosofia de desenvolvimento que enfatiza a escrita de código limpo, legível e fácil de manter. Design patterns são soluções comprovadas para problemas comuns de design de software.
@@ -104,7 +108,6 @@ Este projeto é uma API RESTful desenvolvida em Java utilizando o framework Spri
    ```bash
    http://localhost:8080/swagger-ui.html
    ```
-![image](https://github.com/user-attachments/assets/88e9826c-cf24-4829-a85d-61965d2f2964)
 
    
 ## Testes Unitários
